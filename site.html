@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Değerler Eğitimi Projesi</title>
+<style>
+  :root {
+    --bg-color: #f4f6f3;
+    --card-bg: #ffffff;
+    --text-main: #222d25;
+    --text-sub: #58695d;
+    --primary: #2d7a58;
+    --primary-hover: #225e43;
+    --btn-text: #ffffff;
+    --border-color: #d8e0db;
+  }
+  [data-theme="dark"] {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-main: #e0e0e0;
+    --text-sub: #a0a0a0;
+    --primary: #4a9e76;
+    --primary-hover: #3b8260;
+    --btn-text: #ffffff;
+    --border-color: #333333;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    transition: background 0.2s ease, color 0.2s ease;
+    overflow-x: hidden;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--card-bg);
+  }
+  .hamburger-btn {
+    font-size: 1.4rem;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+  .hamburger-btn:hover { background: var(--bg-color); }
+  .theme-toggle {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  .nav-drawer {
+    height: 100%;
+    width: 280px;
+    position: fixed;
+    top: 0;
+    left: -280px;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    padding: 20px;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .nav-drawer.active { left: 0; }
+  .drawer-close {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: var(--text-main);
+    cursor: pointer;
+  }
+  .nav-link-btn {
+    width: 100%;
+    background: var(--bg-color);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-link-btn:hover {
+    border-color: var(--primary);
+  }
+
+  .backdrop {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.35);
+    display: none;
+    z-index: 999;
+  }
+  .backdrop.show { display: block; }
+
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  .box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .grid-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+  }
+  .grid-col-left .box {
+    height: 100%;
+    justify-content: space-between;
+  }
+  .grid-col-right {
+    justify-content: space-between;
+  }
+  .grid-col-right .history-panel {
+    flex: 1;
+  }
+  .grid-col-right .verse-panel {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+  }
+
+  .page-view { display: none; }
+  .page-view.visible { display: block; }
+
+  h2 { font-size: 1.1rem; margin: 0 0 10px; }
+  .sub-text { color: var(--text-sub); font-size: 0.9rem; line-height: 1.4; }
+  .q-title { font-size: 1.1rem; line-height: 1.5; margin: 10px 0 16px; font-weight: 600; }
+
+  .opts-group { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn {
+    background: var(--bg-color);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  .opt-btn:hover { border-color: var(--primary); }
+  .opt-btn.picked { border-color: var(--primary); background: var(--primary); color: var(--btn-text); }
+
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-main);
+    font: inherit;
+    min-height: 80px;
+    margin-top: 10px;
+    resize: vertical;
+  }
+
+  .action-btn {
+    background: var(--primary);
+    color: var(--btn-text);
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 14px;
+    width: 100%;
+  }
+  .action-btn:hover { background: var(--primary-hover); }
+  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .quote-box {
+    font-style: italic;
+    line-height: 1.5;
+    border-left: 3px solid var(--primary);
+    padding-left: 10px;
+    margin: 8px 0;
+  }
+  .quote-src { color: var(--text-sub); font-size: 0.8rem; }
+
+  .stats-wrap { margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px; }
+  .stat-item { margin-bottom: 10px; }
+  .stat-meta { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 3px; }
+  .progress-bg { height: 8px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--primary); transition: width 0.4s; }
+
+  .vakit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .vakit-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 4px;
+    text-align: center;
+  }
+  .vakit-card .label { font-size: 0.8rem; color: var(--text-sub); }
+  .vakit-card .val { font-size: 1.05rem; font-weight: 600; margin-top: 2px; }
+  .timer-display { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-align: center; margin: 12px 0 2px; }
+
+  .city-select { display: flex; gap: 6px; margin-top: 6px; }
+  .city-select input {
+    flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main);
+  }
+  .mini-btn {
+    background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color);
+    border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem;
+  }
+
+  .toast-msg {
+    background: var(--primary);
+    color: var(--btn-text);
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    display: none;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .history-list {
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .history-item {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 0.83rem;
+  }
+  .h-q { font-weight: 600; margin-bottom: 3px; }
+  .h-a { color: var(--primary); font-weight: 600; margin-bottom: 3px; }
+  .h-r { color: var(--text-sub); font-style: italic; margin-bottom: 4px; word-break: break-word; }
+  .edit-area { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+  .edit-area select {
+    padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main);
+  }
+
+  .info-block { margin-bottom: 16px; }
+  .info-block h3 { color: var(--primary); margin: 0 0 6px; font-size: 1rem; }
+  .info-block p { margin: 0; line-height: 1.5; color: var(--text-sub); font-size: 0.92rem; }
+</style>
+</head>
+<body>
+
+<div class="backdrop" id="backdrop" onclick="closeDrawer()"></div>
+
+<div class="nav-drawer" id="drawer">
+  <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+  <button class="nav-link-btn" onclick="openAboutView()">
+    <span>Biz Kimiz?</span>
+    <span>→</span>
+  </button>
+</div>
+
+<header>
+  <button class="hamburger-btn" onclick="openDrawer()">☰</button>
+  <button class="theme-toggle" id="themeToggler">🌙 Karanlık</button>
+</header>
+
+<main>
+
+  <section class="page-view visible" id="view-q">
+    <div class="box" style="max-width: 580px; margin: 0 auto;">
+      <p class="sub-text" id="qSubHeader"></p>
+      <div class="q-title" id="qMainText"></div>
+      <div class="opts-group" id="optsContainer"></div>
+      <textarea id="userReason" placeholder="Kararının sebebini kısaca yazabilirsin (isteğe bağlı)..."></textarea>
+      <button class="action-btn" id="sendBtn" disabled>Cevabımı Gönder</button>
+    </div>
+  </section>
+
+  <section class="page-view" id="view-h">
+    <div class="box" style="max-width: 580px; margin: 0 auto;">
+      <h2>Günün Hadisi</h2>
+      <div class="quote-box" id="hText"></div>
+      <div class="quote-src" id="hSrc"></div>
+      <div class="stats-wrap">
+        <h2>Diğer Katılımcıların Yanıtları</h2>
+        <div id="statsContent"><p class="sub-text">İstatistikler hesaplanıyor...</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-view" id="view-thx">
+    <div class="box" style="max-width: 580px; margin: 0 auto; text-align:center; padding: 40px 20px;">
+      <h1 style="color: var(--primary); margin:0 0 10px;">Teşekkür Ederiz!</h1>
+      <p class="sub-text">Yanıtın başarıyla alındı. Ana sayfaya yönlendiriliyorsun...</p>
+    </div>
+  </section>
+
+  <section class="page-view" id="view-about">
+    <div class="box" style="max-width: 620px; margin: 0 auto;">
+      <h2 style="font-size:1.3rem;">Biz Kimiz?</h2>
+      <div style="height:1px; background:var(--border-color); margin: 8px 0 16px;"></div>
+      
+      <div class="info-block">
+        <h3>Hakkımızda</h3>
+        <p>Bu platform, gençlerin günlük hayatta karşılaştıkları ahlaki ikilemler ve toplumsal değerler üzerindeki farkındalıklarını ölçmek amacıyla hazırlanmış bir TÜBİTAK araştırma projesidir.</p>
+      </div>
+
+      <div class="info-block">
+        <h3>Projenin Amacı</h3>
+        <p>Yenilikçi dijital araçlar aracılığıyla değerler eğitimini desteklemek, bireylerin kendi kararlarını sorgulayıp tefekkür etmelerine katkı sunmak ve anonim veriler ışığında empati eğilimlerini analiz etmektir.</p>
+      </div>
+
+      <div class="info-block">
+        <h3>İletişim</h3>
+        <p>📧 <strong>Proje E-Posta:</strong><br>
+          <a href="mailto:tubitak.degerlerprojesi@gmail.com" style="color:var(--primary); font-weight:600; text-decoration:none;">tubitak.degerlerprojesi@gmail.com</a>
+        </p>
+      </div>
+
+      <button class="action-btn" onclick="showDashboard()">Ana Sayfaya Dön</button>
+    </div>
+  </section>
+
+  <section class="page-view" id="view-main">
+    <div id="toast" class="toast-msg"></div>
+
+    <div class="dashboard-grid">
+      <div class="grid-col grid-col-left">
+        <div class="box">
+          <div>
+            <h2>Ezan Vakitleri</h2>
+            <div class="city-select">
+              <input id="cityVal" placeholder="Şehir giriniz..." value="Istanbul">
+              <button class="mini-btn" id="updateCityBtn">Bul</button>
+            </div>
+            <div class="vakit-grid" id="vakitGrid"></div>
+          </div>
+          <div>
+            <p style="text-align:center; color:var(--text-sub); font-size:0.85rem;" id="targetVakitLabel"></p>
+            <div class="timer-display" id="clockCount">--:--:--</div>
+            <p class="sub-text" style="text-align:center; font-size:0.8rem; margin-top:6px;" id="hijriInfo"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-col grid-col-right">
+        <div class="box history-panel">
+          <h2>Cevapladığın Sorular</h2>
+          <div class="history-list" id="historyList">
+            <p class="sub-text">Henüz kayıtlı bir yanıtın bulunmuyor.</p>
+          </div>
+        </div>
+
+        <div class="box verse-panel">
+          <h2>Günün Ayeti ve Hikmeti</h2>
+          <div class="quote-box" style="font-size:0.88rem;">
+            "İyilikle kötülük bir olmaz. Sen kötülüğü en güzel olan şeyle sav..."
+          </div>
+          <div class="quote-src">Fussilet Suresi, 34. Ayet</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const SCRIPT_URL = "BURAYA_APPS_SCRIPT_URL";
+
+const questionBank = [
+  { text: "Yolda elinde ağır poşetlerle yürümekte zorlanan birini gördün. Ne yaparsın?", options: ["Hemen yanına gidip yardım ederim", "Yardım istemediği sürece karışmam", "Yanından geçer giderim"] },
+  { text: "Sınıfta bir arkadaşının kopya çektiğine şahit oldun. Nasıl davranırsın?", options: ["Durumu öğretmene bildiririm", "Arkadaşımla baş başa konuşup uyarırım", "Beni ilgilendirmez, sessiz kalırım"] },
+  { text: "Sokakta yalnız başına ağlayan küçük bir çocuk gördün. İlk tepkin ne olur?", options: ["Yanına gidip sakince ne olduğunu sorarım", "Çevredeki bir esnafa veya zabıtaya haber veririm", "Ailesi yanındadır diyerek yoluma devam ederim"] },
+  { text: "Yakın bir arkadaşın sana önemli bir sırrını emanet etti. Başkası sorduğunda ne yaparsın?", options: ["Sırrı ne pahasına olursa olsun korurum", "Geçiştirip konuyu kapatırım", "Güvendiğim başka birine anlatırım"] },
+  { text: "Gece geç saatte komşundan yüksek ses geliyor. Nasıl bir yol izlersin?", options: ["Uygun bir dille rica etmek için kapısını çalarım", "Doğrudan yöneticiye veya yetkililere bildiririm", "Rahatsız olsam da sabredip beklerim"] },
+  { text: "Kapına ihtiyaç sahibi olduğunu söyleyen biri geldi. Ne yaparsın?", options: ["Elimden geldiğince destek olmaya çalışırım", "Gıda veya eşya yardımında bulunurum", "Kibarca yardımcı olamayacağımı söylerim"] },
+  { text: "Ramazan ayında komşunun yalnız olduğunu ve yemek yapamadığını fark ettin. Ne yaparsın?", options: ["İftar yemeğinden ona da bir tabak götürürüm", "Arayıp bir şeye ihtiyacı olup olmadığını sorarım", "Kendi düzenime devam ederim"] },
+  { text: "Bir arkadaşının arkasından asılsız konuşulduğunu duydun. Ne yaparsın?", options: ["Arkadaşımı savunur, lafı keserim", "Sessiz kalıp ortamı terk ederim", "Dinler ama yorum yapmam"] }
+];
+
+const hadithBank = [
+  { text: "Kişi, kardeşinin ihtiyacını gidermekle meşgul olduğu sürece Allah da onun ihtiyacını giderir.", source: "Buhârî, Mezâlim 4" },
+  { text: "Müslüman, elinden ve dilinden insanların emin olduğu kimsedir.", source: "Buhârî, İman 4" },
+  { text: "Merhamet etmeyene merhamet edilmez.", source: "Buhârî, Edeb 18" },
+  { text: "Tebessüm etmen, kardeşinin yüzüne bakman sadakadır.", source: "Tirmizî, Birr 36" },
+  { text: "Kolaylaştırın, zorlaştırmayın; müjdeleyin, nefret ettirmeyin.", source: "Buhârî, İlim 11" },
+  { text: "Sadaka vermekle mal eksilmez.", source: "Müslim, Birr 69" },
+  { text: "Sizin en hayırlınız, ahlakı en güzel olanınızdır.", source: "Buhârî, Menâkıb 23" },
+  { text: "Hiçbiriniz kendisi için istediğini kardeşi için de istemedikçe tam iman etmiş olmaz.", source: "Buhârî, İman 7" }
+];
+
+function getFormattedDate() {
+  const d = new Date();
+  return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+}
+
+function calculateDayIndex(dateStr) {
+  const y = parseInt(dateStr.slice(0, 4));
+  const m = parseInt(dateStr.slice(4, 6));
+  const d = parseInt(dateStr.slice(6, 8));
+  return Math.floor(Date.UTC(y, m - 1, d) / 86400000);
+}
+
+function switchView(viewId) {
+  document.querySelectorAll('.page-view').forEach(el => el.classList.remove('visible'));
+  document.getElementById(viewId).classList.add('visible');
+}
+
+function openDrawer() {
+  document.getElementById('drawer').classList.add('active');
+  document.getElementById('backdrop').classList.add('show');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('active');
+  document.getElementById('backdrop').classList.remove('show');
+}
+
+function openAboutView() {
+  closeDrawer();
+  switchView('view-about');
+}
+
+function fetchUserHistory() {
+  return JSON.parse(localStorage.getItem('user_quiz_history') || '{}');
+}
+
+function storeAnswer(dayKey, optIdx, reasonText) {
+  const history = fetchUserHistory();
+  history[dayKey] = {
+    opt: optIdx,
+    reason: reasonText,
+    qIdx: calculateDayIndex(dayKey) % questionBank.length
+  };
+  localStorage.setItem('user_quiz_history', JSON.stringify(history));
+}
+
+const currentDayKey = getFormattedDate();
+const dayOffset = calculateDayIndex(currentDayKey) % questionBank.length;
+const activeQ = questionBank[dayOffset];
+const activeH = hadithBank[dayOffset % hadithBank.length];
+const letterLabels = ["A", "B", "C", "D"];
+
+const themeToggler = document.getElementById('themeToggler');
+function setAppTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  themeToggler.textContent = theme === 'dark' ? '☀️ Aydınlık' : '🌙 Karanlık';
+  localStorage.setItem('app_theme', theme);
+}
+
+themeToggler.onclick = () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  setAppTheme(current === 'dark' ? 'light' : 'dark');
+};
+setAppTheme(localStorage.getItem('app_theme') || 'light');
+
+let selectedOption = null;
+
+function initQuestionView() {
+  selectedOption = null;
+  document.getElementById('qSubHeader').textContent = "Günün Değerler Sorusu";
+  document.getElementById('qMainText').textContent = activeQ.text;
+  document.getElementById('userReason').value = "";
+  document.getElementById('sendBtn').disabled = true;
+
+  const container = document.getElementById('optsContainer');
+  container.innerHTML = "";
+  activeQ.options.forEach((text, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = `${letterLabels[i]}) ${text}`;
+    btn.onclick = () => {
+      selectedOption = i;
+      document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('picked'));
+      btn.classList.add('picked');
+      document.getElementById('sendBtn').disabled = false;
+    };
+    container.appendChild(btn);
+  });
+}
+
+document.getElementById('sendBtn').onclick = async () => {
+  if (selectedOption === null) return;
+  const reason = document.getElementById('userReason').value.trim();
+  document.getElementById('sendBtn').disabled = true;
+
+  const userLogs = fetchUserHistory();
+  const exists = !!userLogs[currentDayKey];
+
+  storeAnswer(currentDayKey, selectedOption, reason);
+
+  document.getElementById('hText').textContent = `“${activeH.text}”`;
+  document.getElementById('hSrc').textContent = activeH.source;
+  switchView('view-h');
+
+  const resData = await pushVoteData(selectedOption, reason);
+  displayStats(resData);
+
+  setTimeout(() => {
+    switchView('view-thx');
+    setTimeout(() => {
+      showDashboard(exists ? "Daha önce cevapladığın soru güncellendi." : "Cevabın başarıyla kaydedildi.");
+    }, 2200);
+  }, 4500);
+};
+
+async function pushVoteData(opt, reason) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes("BURAYA")) return null;
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=vote&day=${currentDayKey}&opt=${opt}&reason=${encodeURIComponent(reason)}`);
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+function displayStats(data) {
+  const box = document.getElementById('statsContent');
+  if (!data) {
+    box.innerHTML = "<p class='sub-text'>İstatistik verisi alınamadı.</p>";
+    return;
+  }
+  const total = activeQ.options.reduce((acc, _, i) => acc + (data[i] || 0), 0);
+  box.innerHTML = "";
+  activeQ.options.forEach((txt, i) => {
+    const count = data[i] || 0;
+    const ratio = total ? Math.round((count / total) * 100) : 0;
+    const div = document.createElement('div');
+    div.className = 'stat-item';
+    div.innerHTML = `
+      <div class="stat-meta"><span>${letterLabels[i]}) ${txt}</span><span>%${ratio}</span></div>
+      <div class="progress-bg"><div class="progress-fill" style="width:${ratio}%"></div></div>`;
+    box.appendChild(div);
+  });
+}
+
+function renderHistoryList() {
+  const box = document.getElementById('historyList');
+  const logs = fetchUserHistory();
+  const sortedKeys = Object.keys(logs).sort().reverse();
+
+  if (sortedKeys.length === 0) {
+    box.innerHTML = "<p class='sub-text'>Henüz yanıtlanmış bir soru bulunmuyor.</p>";
+    return;
+  }
+
+  box.innerHTML = "";
+  sortedKeys.forEach(k => {
+    const entry = logs[k];
+    const qObj = questionBank[entry.qIdx] || questionBank[0];
+    const card = document.createElement('div');
+    card.className = 'history-item';
+
+    card.innerHTML = `
+      <div class="h-q">${qObj.text}</div>
+      <div class="h-a">Verilen Cevap: ${letterLabels[entry.opt]}) ${qObj.options[entry.opt]}</div>
+      <div class="h-r">${entry.reason ? 'Açıklama: "' + entry.reason + '"' : 'Açıklama belirtilmedi.'}</div>
+      <button class="mini-btn" onclick="toggleEdit('${k}')">Düzenle</button>
+      <div id="edit-box-${k}" class="edit-area" style="display:none;">
+        <select id="edit-select-${k}">
+          ${qObj.options.map((o, idx) => `<option value="${idx}" ${idx === entry.opt ? 'selected' : ''}>${letterLabels[idx]})${o}</option>`).join('')}
+        </select>
+        <textarea id="edit-txt-${k}" style="min-height:45px;" placeholder="Gerekçeni düzenle">${entry.reason || ''}</textarea>
+        <button class="mini-btn" style="background:var(--primary); color:var(--btn-text);" onclick="confirmEdit('${k}')">Kaydet</button>
+      </div>
+    `;
+    box.appendChild(card);
+  });
+}
+
+function toggleEdit(key) {
+  const area = document.getElementById(`edit-box-${key}`);
+  area.style.display = area.style.display === 'none' ? 'flex' : 'none';
+}
+
+function confirmEdit(key) {
+  const optVal = parseInt(document.getElementById(`edit-select-${key}`).value);
+  const reasonVal = document.getElementById(`edit-txt-${key}`).value.trim();
+
+  storeAnswer(key, optVal, reasonVal);
+  renderHistoryList();
+  pushVoteData(optVal, reasonVal);
+  triggerToast("Cevabınız başarıyla güncellendi.");
+}
+
+function triggerToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3500);
+}
+
+const vakitNames = { Fajr: "İmsak", Dhuhr: "Öğle", Asr: "İkindi", Maghrib: "Akşam", Isha: "Yatsı" };
+const targetKeys = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+let currentTimes = null;
+
+function showDashboard(msg) {
+  switchView('view-main');
+  loadPrayerData(document.getElementById('cityVal').value || "Istanbul");
+  renderHistoryList();
+  if (msg) triggerToast(msg);
+}
+
+document.getElementById('updateCityBtn').onclick = () => {
+  loadPrayerData(document.getElementById('cityVal').value || "Istanbul");
+};
+
+async function loadPrayerData(city) {
+  try {
+    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=Turkey&method=13`);
+    const payload = await res.json();
+    currentTimes = payload.data.timings;
+    
+    const grid = document.getElementById('vakitGrid');
+    grid.innerHTML = "";
+    targetKeys.forEach(k => {
+      const el = document.createElement('div');
+      el.className = 'vakit-card';
+      el.innerHTML = `<div class="label">${vakitNames[k]}</div><div class="val">${currentTimes[k].slice(0, 5)}</div>`;
+      grid.appendChild(el);
+    });
+
+    document.getElementById('hijriInfo').textContent = `${payload.data.date.readable} • ${payload.data.date.hijri.date} ${payload.data.date.hijri.month.en}`;
+  } catch (err) {
+    document.getElementById('vakitGrid').innerHTML = "<p class='sub-text'>Vakit bilgisi çekilemedi.</p>";
+  }
+}
+
+function getTimeInSeconds(timeStr) {
+  const parts = timeStr.slice(0, 5).split(':').map(Number);
+  return (parts[0] * 60 + parts[1]) * 60;
+}
+
+function refreshClock() {
+  if (!currentTimes) return;
+  const now = new Date();
+  const totalSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+  let nextK = null, nextS = null;
+  for (const k of targetKeys) {
+    const s = getTimeInSeconds(currentTimes[k]);
+    if (s > totalSecs) { nextK = k; nextS = s; break; }
+  }
+
+  let remaining = 0;
+  if (nextK) {
+    remaining = nextS - totalSecs;
+    document.getElementById('targetVakitLabel').textContent = `Sıradaki Vakit: ${vakitNames[nextK]}`;
+  } else {
+    const fajrSecs = getTimeInSeconds(currentTimes.Fajr);
+    remaining = (86400 - totalSecs) + fajrSecs;
+    document.getElementById('targetVakitLabel').textContent = "Sıradaki Vakit: İmsak (Yarın)";
+  }
+
+  const hrs = Math.floor(remaining / 3600);
+  const mins = Math.floor((remaining % 3600) / 60);
+  const secs = remaining % 60;
+
+  document.getElementById('clockCount').textContent = 
+    `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+setInterval(refreshClock, 1000);
+
+initQuestionView();
+switchView('view-q');
+</script>
+</body>
+</html>
