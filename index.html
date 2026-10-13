@@ -286,18 +286,6 @@ const HADITHS = [
   { text: "Gerçek pehlivan, öfkelendiğinde kendini tutabilendir.", source: "Buhârî, Edeb 76" }
 ];
 
-const VERSES = [
-  { text: "İyilikle kötülük bir olmaz. Sen kötülüğü en güzel olan şeyle sav...", source: "Fussilet Suresi, 34. Ayet" },
-  { text: "Şüphesiz Allah, adaleti, ihsanı, akrabaya bakmayı emreder...", source: "Nahl Suresi, 90. Ayet" },
-  { text: "Kim zerre ağırlığınca bir iyilik yapmışsa onu görür.", source: "Zilzal Suresi, 7. Ayet" },
-  { text: "Sabredenlere mükafatları hesapsız ödenecektir.", source: "Zümer Suresi, 10. Ayet" },
-  { text: "Şüphesiz ki Allah, sabredenlerle beraberdir.", source: "Bakara Suresi, 153. Ayet" },
-  { text: "Kendi elinizle kendinizi tehlikeye atmayın, iyilik edin...", source: "Bakara Suresi, 195. Ayet" },
-  { text: "Rablerinden korkanlar cennetlere bölük bölük sevk edildiler...", source: "Zümer Suresi, 73. Ayet" },
-  { text: "Gerçek iyilik, Allah'a, ahiret gününe iman etmektir...", source: "Bakara Suresi, 177. Ayet" },
-  ...Array(22).fill({ text: "Ey iman edenler! Sabır ve namaz ile Allah'tan yardım isteyin.", source: "Bakara Suresi, 153. Ayet" })
-];
-
 function getGlobalDayIndex() {
   const d = new Date();
   const utcDays = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
@@ -312,7 +300,6 @@ function todayKey() {
 let dayIndex = getGlobalDayIndex();
 let currentQ = QUESTIONS[dayIndex];
 let currentH = HADITHS[dayIndex];
-let currentV = VERSES[dayIndex];
 const LETTERS = ["A", "B", "C"];
 
 function show(id) {
@@ -623,10 +610,10 @@ async function initApp() {
 
   currentQ = QUESTIONS[dayIndex];
   currentH = HADITHS[ayetIndex];
-  currentV = VERSES[ayetIndex];
 
-  document.getElementById("verseText").textContent = `“${currentV.text}”`;
-  document.getElementById("verseSrc").textContent = currentV.source;
+  // SİTEDEKİ KARTA VE HADİS SAYFASINA SENKRONİZE BİÇİMDE YAZMA:
+  document.getElementById("verseText").textContent = `“${currentH.text}”`;
+  document.getElementById("verseSrc").textContent = currentH.source;
 
   renderQuestion();
   show("view-question");
