@@ -195,7 +195,7 @@
         </div>
 
         <div class="card card-verse">
-          <h2 id="verseTitle">Günün Ayeti ve Hikmeti</h2>
+          <h2 id="verseTitle">Günün Ayeti ve Hadisi</h2>
           <p class="hadith" style="font-size:0.9rem; margin:6px 0;" id="verseText"></p>
           <p class="hadith-src" id="verseSrc"></p>
         </div>
@@ -212,7 +212,7 @@
 </main>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4-eInIvVcxcyNBC623A56nQ2nbdBJBGH_TMsjkyQcDgstdF-rnkMpd5ofBEi7IZddlg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzv1nkAacPrQWz_x6i1ufuQOCv8vKDTqjDMwE8cQ3Xckl1vDTJIvkhnFvBl7LOYRWGlpA/exec";
 
 let clientId = localStorage.getItem("project_client_id");
 if (!clientId) {
@@ -461,7 +461,7 @@ function renderHistory() {
       <button class="small-btn" onclick="toggleEdit('${item.qIndex}')">Düzenle</button>
       <div id="edit-box-${item.qIndex}" style="display:none; margin-top:8px; flex-direction:column; gap:6px;">
         <select id="edit-sel-${item.qIndex}" style="padding:6px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit;">
-          ${q.options.map((optText, oIdx) => `<option value="${oIdx}" ${oIdx === item.opt ? 'selected' : ''}>${LETTERS[oIdx]})${optText}</option>`).join('')}
+          ${q.options.map((optText, oIdx) => `<option value="${oIdx}" ${oIdx === item.opt ? 'selected' : ''}>${LETTERS[oIdx]}) ${optText}</option>`).join('')}
         </select>
         <textarea id="edit-txt-${item.qIndex}" style="min-height:50px; margin-top:0;" placeholder="Gerekçeni düzenle">${item.reason || ''}</textarea>
         <button class="small-btn" style="background:var(--accent); color:var(--on-accent); border:none;" onclick="confirmEdit(${item.qIndex})">Değişikliği Kaydet</button>
@@ -603,6 +603,7 @@ setInterval(updateCountdown, 1000);
 async function initApp() {
   loadPrayerTimes("Istanbul");
 
+  let ayetIndex = dayIndex;
   try {
     const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
     const data = await res.json();
@@ -612,11 +613,17 @@ async function initApp() {
         dayIndex = sIdx;
       }
     }
+    if (data && data.aktif_ayet !== undefined && data.aktif_ayet !== "") {
+      const aIdx = parseInt(data.aktif_ayet);
+      if (!isNaN(aIdx) && aIdx >= 0 && aIdx < HADITHS.length) {
+        ayetIndex = aIdx;
+      }
+    }
   } catch (e) {}
 
   currentQ = QUESTIONS[dayIndex];
-  currentH = HADITHS[dayIndex];
-  currentV = VERSES[dayIndex];
+  currentH = HADITHS[ayetIndex];
+  currentV = VERSES[ayetIndex];
 
   document.getElementById("verseText").textContent = `“${currentV.text}”`;
   document.getElementById("verseSrc").textContent = currentV.source;
