@@ -6,157 +6,38 @@
 <title>Değerler Eğitimi Projesi</title>
 <style>
   :root {
-    --bg: #f5f7f4;
-    --card: #ffffff;
-    --text: #1f2d24;
-    --muted: #5b6b61;
-    --accent: #2e7d5b;
-    --accent-hover: #256649;
-    --on-accent: #ffffff;
-    --border: #d9e2dc;
+    --bg: #f5f7f4; --card: #ffffff; --text: #1f2d24; --muted: #5b6b61;
+    --accent: #2e7d5b; --accent-hover: #256649; --on-accent: #ffffff; --border: #d9e2dc;
   }
   [data-theme="dark"] {
-    --bg: #161616;
-    --card: #222222;
-    --text: #e8e8e8;
-    --muted: #9a9a9a;
-    --accent: #40916c;
-    --accent-hover: #317354;
-    --on-accent: #ffffff;
-    --border: #3a3a3a;
+    --bg: #161616; --card: #222222; --text: #e8e8e8; --muted: #9a9a9a;
+    --accent: #40916c; --accent-hover: #317354; --on-accent: #ffffff; --border: #3a3a3a;
   }
   * { box-sizing: border-box; }
-  
   body, .card, header, .sidebar, .option, textarea, input, .small-btn, .prayer-item, .history-card, .pub-item {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
-
-  body {
-    margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--card);
-  }
-  .menu-btn {
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    color: var(--text);
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 8px;
-  }
+  body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--card); }
+  .menu-btn { font-size: 1.5rem; background: none; border: none; color: var(--text); cursor: pointer; padding: 4px 8px; border-radius: 8px; }
   .menu-btn:hover { background: var(--bg); }
-  .theme-btn {
-    background: var(--card);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 14px;
-    cursor: pointer;
-  }
-
-  .sidebar {
-    height: 100%;
-    width: 300px;
-    position: fixed;
-    top: 0;
-    left: -300px;
-    background-color: var(--card);
-    border-right: 1px solid var(--border);
-    transition: left 0.3s ease;
-    z-index: 1000;
-    padding: 24px;
-    box-shadow: 4px 0 16px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    overflow-y: auto;
-  }
+  .theme-btn { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; cursor: pointer; }
+  
+  .sidebar { height: 100%; width: 300px; position: fixed; top: 0; left: -300px; background-color: var(--card); border-right: 1px solid var(--border); transition: left 0.3s ease; z-index: 1000; padding: 24px; box-shadow: 4px 0 16px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
   .sidebar.open { left: 0; }
-  .close-sidebar {
-    align-self: flex-end;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--text);
-    cursor: pointer;
-  }
-
-  .sidebar-nav-btn {
-    width: 100%;
-    background: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .close-sidebar { align-self: flex-end; background: none; border: none; font-size: 1.5rem; color: var(--text); cursor: pointer; }
+  .sidebar-nav-btn { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 14px; border-radius: 12px; font-size: 1.05rem; font-weight: 600; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
   .sidebar-nav-btn:hover { border-color: var(--accent); background: var(--card); }
-
-  .overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    z-index: 999;
-  }
+  .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 999; }
   .overlay.active { display: block; }
 
   main { max-width: 1000px; margin: 0 auto; padding: 20px; }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .home-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: stretch;
-  }
-  .col {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    height: 100%;
-  }
-  .col-left .card {
-    height: 100%;
-    justify-content: space-between;
-  }
-  .col-right {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    justify-content: space-between;
-  }
-
-  @media (max-width: 768px) {
-    .home-grid { grid-template-columns: 1fr; }
-  }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+  .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
+  .col { display: flex; flex-direction: column; gap: 20px; height: 100%; }
+  .col-left .card { height: 100%; justify-content: space-between; }
+  .col-right { display: flex; flex-direction: column; gap: 20px; justify-content: space-between; }
+  @media (max-width: 768px) { .home-grid { grid-template-columns: 1fr; } }
 
   .view { display: none; }
   .view.active { display: block; animation: fade 0.4s ease-in-out; }
@@ -165,49 +46,20 @@
   h2 { font-size: 1.15rem; margin: 0 0 10px; color: var(--text); }
   .muted { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
   .question { font-size: 1.15rem; line-height: 1.6; margin: 12px 0 20px; font-weight: 600; }
-
   .options { display: flex; flex-direction: column; gap: 10px; }
-  .option {
-    background: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    text-align: left;
-    font-size: 0.95rem;
-    cursor: pointer;
-  }
+  .option { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: left; font-size: 0.95rem; cursor: pointer; }
   .option:hover { border-color: var(--accent); }
   .option.selected { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
 
-  textarea, input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-    font: inherit;
-  }
+  textarea, input[type="text"] { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; }
   textarea { min-height: 90px; margin-top: 12px; resize: vertical; }
 
-  .btn {
-    background: var(--accent);
-    color: var(--on-accent);
-    border: none;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 16px;
-    width: 100%;
-  }
+  .btn { background: var(--accent); color: var(--on-accent); border: none; border-radius: 12px; padding: 12px 20px; font-size: 1rem; cursor: pointer; margin-top: 16px; width: 100%; }
   .btn:hover { background: var(--accent-hover); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .hadith { font-style: italic; line-height: 1.6; border-left: 4px solid var(--accent); padding-left: 12px; margin: 10px 0; }
   .hadith-src { color: var(--muted); font-size: 0.85rem; }
-
   .results { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
   .result-row { margin-bottom: 12px; }
   .result-label { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 4px; }
@@ -215,102 +67,28 @@
   .bar-fill { height: 100%; background: var(--accent); transition: width 0.6s; }
 
   .prayer-times { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
-  .prayer-item {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 4px;
-    text-align: center;
-  }
+  .prayer-item { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 4px; text-align: center; }
   .prayer-item .name { font-size: 0.85rem; color: var(--muted); }
   .prayer-item .time { font-size: 1.15rem; font-weight: 600; margin-top: 2px; }
   .countdown { font-size: 1.6rem; font-weight: 700; color: var(--accent); text-align: center; margin: 16px 0 4px; }
   .next-label { text-align: center; color: var(--muted); font-size: 0.9rem; }
-
   .location-bar { display: flex; gap: 8px; margin-top: 8px; }
   .location-bar input { flex: 1; }
-  .small-btn {
-    background: var(--bg); color: var(--text); border: 1px solid var(--border);
-    border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: 0.85rem;
-  }
+  .small-btn { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: 0.85rem; }
   .small-btn:hover { border-color: var(--accent); }
 
   .thanks { text-align: center; padding: 30px 0; }
   .thanks .big { font-size: 1.6rem; color: var(--accent); font-weight: 700; }
+  .notification { background: var(--accent); color: var(--on-accent); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; display: none; font-size: 0.95rem; text-align: center; }
 
-  .notification {
-    background: var(--accent);
-    color: var(--on-accent);
-    padding: 12px 16px;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    display: none;
-    font-size: 0.95rem;
-    text-align: center;
-  }
+  .history-box { max-height: 220px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 10px; }
+  .history-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 0.85rem; }
 
-  .history-box {
-    max-height: 220px;
-    overflow-y: auto;
-    padding-right: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .history-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 0.85rem;
-  }
-
-  .pub-feed {
-    max-height: 380px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding-right: 4px;
-  }
-  .pub-item {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-left: 5px solid var(--accent);
-    border-radius: 14px;
-    padding: 16px 18px;
-    font-size: 0.95rem;
-  }
-  .pub-question-title {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-style: italic;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 10px;
-    line-height: 1.5;
-  }
-  .pub-answer-badge {
-    display: inline-block;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--accent);
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-  }
-  .pub-reason-text {
-    font-size: 1rem;
-    color: var(--text);
-    line-height: 1.6;
-    background: var(--card);
-    border: 1px solid var(--border);
-    padding: 12px;
-    border-radius: 10px;
-    margin-top: 6px;
-  }
+  .pub-feed { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 4px; }
+  .pub-item { background: var(--bg); border: 1px solid var(--border); border-left: 5px solid var(--accent); border-radius: 14px; padding: 16px 18px; font-size: 0.95rem; }
+  .pub-question-title { font-family: 'Georgia', serif; font-style: italic; font-size: 1.05rem; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
+  .pub-answer-badge { display: inline-block; background: var(--card); border: 1px solid var(--border); color: var(--accent); font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 8px; }
+  .pub-reason-text { font-size: 1rem; color: var(--text); line-height: 1.6; background: var(--card); border: 1px solid var(--border); padding: 12px; border-radius: 10px; margin-top: 6px; }
 
   .about-section { margin-bottom: 20px; }
   .about-section h3 { color: var(--accent); margin: 0 0 8px; font-size: 1.1rem; }
@@ -339,8 +117,8 @@
   <!-- SORU EKRANI -->
   <section class="view active" id="view-question">
     <div class="card" style="max-width: 600px; margin: 0 auto;">
-      <p class="muted" id="dayInfo">Soru Yükleniyor...</p>
-      <p class="question" id="questionText">Lütfen bekleyiniz...</p>
+      <p class="muted" id="dayInfo">Yükleniyor...</p>
+      <p class="question" id="questionText">Soru Yükleniyor...</p>
       <div class="options" id="options"></div>
       <textarea id="reasonBox" placeholder="Sebebini yazmak istersen buraya yazabilirsin (isteğe bağlı)"></textarea>
       <button class="btn" id="submitBtn" disabled>Cevabı Gönder</button>
@@ -415,7 +193,7 @@
 
       <div class="col col-right">
         <div class="card card-history">
-          <h2>Cevaplanan Sorular</h2>
+          <h2>Cevaplanan Sorular (Düzenlenebilir)</h2>
           <div class="history-box" id="historyBox">
             <p class="muted">Henüz cevaplanmış bir soru bulunmuyor.</p>
           </div>
@@ -568,12 +346,10 @@ function getAnswersHistory() {
 
 function saveAnswerToHistory(qIdx, optIndex, reason) {
   const history = getAnswersHistory();
-  // Soru numarasına göre tekil kayıt yapıyoruz
   history[qIdx] = { opt: optIndex, reason: reason, qIndex: qIdx, date: todayKey() };
   localStorage.setItem("answers_history", JSON.stringify(history));
 }
 
-/* Tema */
 const themeBtn = document.getElementById("themeBtn");
 function applyTheme(t) {
   document.documentElement.setAttribute("data-theme", t);
@@ -716,7 +492,7 @@ async function confirmEdit(qIdx) {
   await sendVote(todayKey(), qIdx, optVal, reasonVal);
 }
 
-/* YAYINLANAN CEVAPLARDA HER SORUDAN SADECE EN SONUNCUSUNU GÖSTERME (Gruplama) */
+/* KESİN ÇÖZÜM: YAYINLANAN CEVAPLAR DİNAMİK SABİTLENİR - Asla birbirini ezmez */
 async function renderPublicFeed() {
   const box = document.getElementById("publicFeedBox");
   try {
@@ -730,14 +506,8 @@ async function renderPublicFeed() {
       return;
     }
 
-    // Her sorudan SADECE EN SON verilen cevabı tutuyoruz (Mükerrer soru engelleme)
-    const uniquePublishedMap = new Map();
-    published.forEach(item => {
-      uniquePublishedMap.set(String(item.soru), item);
-    });
-
     box.innerHTML = "";
-    uniquePublishedMap.forEach(item => {
+    published.forEach(item => {
       const qObj = QUESTIONS[item.soru] || { text: "Soru", options: [] };
       const ansText = qObj.options[item.cevap] ? `${LETTERS[item.cevap]}) ${qObj.options[item.cevap]}` : item.cevap;
 
@@ -763,7 +533,6 @@ function showNotification(msg) {
   setTimeout(() => { n.style.display = "none"; }, 4000);
 }
 
-/* Ezan Vakitleri */
 const PRAYER_NAMES = { Fajr: "İmsak", Sunrise: "Güneş", Dhuhr: "Öğle", Asr: "İkindi", Maghrib: "Akşam", Isha: "Yatsı" };
 const SHOW_KEYS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 let timesData = null;
@@ -837,7 +606,6 @@ function updateCountdown() {
 }
 setInterval(updateCountdown, 1000);
 
-// TEK AŞAMALI YÜKLEME (Sunucuyu Bekler, Ekranda Değişip Durmaz)
 async function initApp() {
   loadPrayerTimes("Istanbul");
 
