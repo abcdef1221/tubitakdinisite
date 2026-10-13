@@ -20,9 +20,9 @@
     --card: #222222;
     --text: #e8e8e8;
     --muted: #9a9a9a;
-    --accent: #8c8c8c;
-    --accent-hover: #a3a3a3;
-    --on-accent: #141414;
+    --accent: #40916c;
+    --accent-hover: #317354;
+    --on-accent: #ffffff;
     --border: #3a3a3a;
   }
   * { box-sizing: border-box; }
@@ -405,7 +405,14 @@
 </main>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVCKZA-UJe2e4bcICaW3rOS8rglOsmBASzEhmnuydpCPKlp3rSYpi8mpfaO7IPMKgvDg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-zf7ds1EF6KGQokmK94F7tNU10Fvp3OIU9V21QzxNpPAATBRprMOWAi4iq2I4b4Npjw/exec";
+
+// Benzersiz kullanıcı kimliği oluşturma (Admin paneline veri düşmesi için)
+let clientId = localStorage.getItem("project_client_id");
+if (!clientId) {
+  clientId = "user_" + Math.random().toString(36).substring(2, 15);
+  localStorage.setItem("project_client_id", clientId);
+}
 
 const QUESTIONS = [
   "Yolda elinde ağır poşetlerle yürümekte zorlanan birini gördün. Ne yaparsın?",
@@ -598,7 +605,7 @@ document.getElementById("submitBtn").onclick = async () => {
 async function sendVote(dayStr, qIdx, opt, reason) {
   if (!SCRIPT_URL || SCRIPT_URL.includes("BURAYA")) return null;
   try {
-    const url = `${SCRIPT_URL}?action=vote&day=${dayStr}&soru=${qIdx}&opt=${opt}&reason=${encodeURIComponent(reason)}`;
+    const url = `${SCRIPT_URL}?action=vote&day=${dayStr}&soru=${qIdx}&opt=${opt}&reason=${encodeURIComponent(reason)}&client=${clientId}`;
     const res = await fetch(url);
     return await res.json();
   } catch (e) {
