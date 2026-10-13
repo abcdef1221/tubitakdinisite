@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Değerler Araştırma Projesi</title>
+<title>Değerler Eğitimi Projesi</title>
 <style>
   :root {
     --bg-c: #f3f5f2; --card-c: #ffffff; --text-m: #1d2620; --text-s: #55635b;
@@ -277,11 +277,27 @@ function getTodayCode() {
   return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
 }
 
-const currentIdx = getGlobalDayIndex();
-const activeQuestionData = dbQuestions[currentIdx];
-const activeHadithData = dbHadiths[currentIdx];
-const activeVerseData = dbVerses[currentIdx];
+let currentIdx = getGlobalDayIndex();
+let activeQuestionData = dbQuestions[currentIdx];
+let activeHadithData = dbHadiths[currentIdx];
+let activeVerseData = dbVerses[currentIdx];
 const lettersArr = ["A", "B", "C"];
+
+async function checkServerSettings() {
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
+    const data = await res.json();
+    if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
+      const serverIdx = parseInt(data.aktif_soru);
+      if (!isNaN(serverIdx) && serverIdx >= 0 && serverIdx < dbQuestions.length) {
+        currentIdx = serverIdx;
+        activeQuestionData = dbQuestions[currentIdx];
+        activeHadithData = dbHadiths[currentIdx];
+        activeVerseData = dbVerses[currentIdx];
+      }
+    }
+  } catch(e) {}
+}
 
 function switchTab(id) {
   document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
@@ -291,7 +307,7 @@ function switchTab(id) {
 function showMenu() { document.getElementById('sideDrawer').classList.add('open'); document.getElementById('backdrop').classList.add('act'); }
 function hideMenu() { document.getElementById('sideDrawer').classList.remove('open'); document.getElementById('backdrop').classList.remove('act'); }
 function goToAbout() { hideMenu(); switchTab('pane-about'); }
-function openHome() { switchTab('pane-dash'); fetchPublicFeed(); }
+function openHome() { switchTab('pane-dash'); fetchPublicFeed(); renderLocalHistoryList(); }
 
 function getLocalLogs() { return JSON.parse(localStorage.getItem('my_saved_votes') || '{}'); }
 function writeLocalLog(dateKey, optNum, reasonStr) {
@@ -496,12 +512,17 @@ function executeClockEngine() {
 }
 setInterval(executeClockEngine, 1000);
 
-document.getElementById('dailyTitleHolder').textContent = "Günün Ayeti / Hikmeti";
-document.getElementById('dailyTextHolder').textContent = `“${activeVerseData.text}”`;
-document.getElementById('dailySrcHolder').textContent = activeVerseData.source;
+async function initMainApp() {
+  await checkServerSettings();
+  document.getElementById('dailyTitleHolder').textContent = "Günün Ayeti / Hikmeti";
+  document.getElementById('dailyTextHolder').textContent = `“${activeVerseData.text}”`;
+  document.getElementById('dailySrcHolder').textContent = activeVerseData.source;
+  buildQuestionScreen();
+  switchTab('pane-q');
+  loadPrayerSchedule("Istanbul");
+}
 
-buildQuestionScreen();
-switchTab('pane-q');
+initMainApp();
 </script>
 </body>
 </html>
