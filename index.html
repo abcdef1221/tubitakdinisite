@@ -256,57 +256,64 @@
     padding-right: 4px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   .history-card {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 12px;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
   }
 
-  /* Yüksekliği artırılan en beğenilen cevaplar kutusu */
+  /* BÜYÜTÜLMÜŞ VE VURGULANMIŞ EN BEĞENİLEN CEVAPLAR BÖLÜMÜ */
   .pub-feed {
-    max-height: 280px;
+    max-height: 380px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    padding-right: 4px;
   }
   .pub-item {
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    font-size: 0.9rem;
+    border-left: 5px solid var(--accent);
+    border-radius: 14px;
+    padding: 16px 18px;
+    font-size: 0.95rem;
   }
-
-  /* Düzenleme Alanı Tasarımı */
-  .edit-container {
-    background: var(--card);
-    border: 1px solid var(--accent);
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .edit-opt-btn {
-    background: var(--bg);
+  /* Sorunun Özel Farklı Fontu */
+  .pub-question-title {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    font-weight: 600;
     color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 10px;
-    text-align: left;
-    font-size: 0.82rem;
-    cursor: pointer;
+    margin-bottom: 10px;
+    line-height: 1.5;
   }
-  .edit-opt-btn.active-opt {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: var(--on-accent);
+  /* Cevap ve Gerekçenin Öne Çıkarılması */
+  .pub-answer-badge {
+    display: inline-block;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+  .pub-reason-text {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.6;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 6px;
   }
 
   .about-section { margin-bottom: 20px; }
@@ -412,7 +419,7 @@
 
       <div class="col col-right">
         <div class="card card-history">
-          <h2>Cevaplanan Sorular</h2>
+          <h2>Cevaplanan Sorular (Düzenlenebilir)</h2>
           <div class="history-box" id="historyBox">
             <p class="muted">Henüz cevaplanmış bir soru bulunmuyor.</p>
           </div>
@@ -426,9 +433,9 @@
       </div>
     </div>
 
-    <!-- En Beğenilen / Paylaşılan Cevaplar Kutusu Yükseltilmiş Hali -->
+    <!-- Büyütülen ve İçeriği Öne Çıkarılan Yayınlanan Cevaplar Kutusu -->
     <div class="card" style="margin-top: 20px; padding: 24px;">
-      <h2>En Beğenilen / Paylaşılan Cevaplar</h2>
+      <h2 style="font-size: 1.25rem; margin-bottom: 16px;">En Beğenilen / Paylaşılan Cevaplar ve Gerekçeler</h2>
       <div class="pub-feed" id="publicFeedBox">
         <p class="muted">Yayınlanan bir yanıt bulunmuyor.</p>
       </div>
@@ -665,9 +672,6 @@ function renderResults(counts) {
   });
 }
 
-/* Cevaplanan Sorular ve Özelleştirilmiş Düzenleme Alanı */
-const editSelections = {};
-
 function renderHistory() {
   const box = document.getElementById("historyBox");
   const history = getAnswersHistory();
@@ -682,33 +686,19 @@ function renderHistory() {
   keys.forEach(dayKeyStr => {
     const item = history[dayKeyStr];
     const q = QUESTIONS[item.qIndex] || QUESTIONS[0];
-    editSelections[dayKeyStr] = item.opt;
-
     const card = document.createElement("div");
     card.className = "history-card";
     card.innerHTML = `
-      <div style="font-weight:600; margin-bottom:4px;">${q.text}</div>
-      <div style="color:var(--accent); font-weight:600; margin-bottom:4px;">Seçiminiz: ${LETTERS[item.opt]}) ${q.options[item.opt]}</div>
-      <div style="color:var(--muted); font-style:italic; margin-bottom:10px;">Gerekçeniz: "${item.reason || 'Açıklama belirtilmedi.'}"</div>
-      
-      <button class="small-btn" onclick="toggleEdit('${dayKeyStr}')">Gerekçe veya Cevabı Düzenle</button>
-      
-      <div id="edit-box-${dayKeyStr}" class="edit-container" style="display:none;">
-        <span style="font-size:0.8rem; font-weight:600; color:var(--muted);">Cevabınızı Değiştirin:</span>
-        <div style="display:flex; flex-direction:column; gap:6px;">
-          ${q.options.map((optText, oIdx) => `
-            <button class="edit-opt-btn ${oIdx === item.opt ? 'active-opt' : ''}" 
-                    id="btn-opt-${dayKeyStr}-${oIdx}" 
-                    onclick="selectEditOpt('${dayKeyStr}',${oIdx})">
-              ${LETTERS[oIdx]})${optText}
-            </button>
-          `).join('')}
-        </div>
-        
-        <span style="font-size:0.8rem; font-weight:600; color:var(--muted); margin-top:4px;">Gerekçenizi Güncelleyin (Önemli):</span>
-        <textarea id="edit-txt-${dayKeyStr}" style="min-height:75px; margin-top:0;" placeholder="Gerekçenizi buraya yazabilirsiniz...">${item.reason || ''}</textarea>
-        
-        <button class="btn" style="padding:8px 12px; margin-top:4px; font-size:0.85rem;" onclick="confirmEdit('${dayKeyStr}', ${item.qIndex})">Gerekçe ve Cevabı Kaydet</button>
+      <div style="font-weight:600; margin-bottom:2px;">${q.text}</div>
+      <div style="color:var(--accent); font-weight:600;">Cevabınız: ${LETTERS[item.opt]}) ${q.options[item.opt]}</div>
+      <div style="color:var(--muted); font-style:italic; margin-bottom:8px;">${item.reason ? '"' + item.reason + '"' : 'Açıklama yazılmadı.'}</div>
+      <button class="small-btn" onclick="toggleEdit('${dayKeyStr}')">Düzenle</button>
+      <div id="edit-box-${dayKeyStr}" style="display:none; margin-top:8px; flex-direction:column; gap:6px;">
+        <select id="edit-sel-${dayKeyStr}" style="padding:6px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit;">
+          ${q.options.map((optText, oIdx) => `<option value="${oIdx}" ${oIdx === item.opt ? 'selected' : ''}>${LETTERS[oIdx]})${optText}</option>`).join('')}
+        </select>
+        <textarea id="edit-txt-${dayKeyStr}" style="min-height:50px; margin-top:0;" placeholder="Gerekçeni düzenle">${item.reason || ''}</textarea>
+        <button class="small-btn" style="background:var(--accent); color:var(--on-accent); border:none;" onclick="confirmEdit('${dayKeyStr}', ${item.qIndex})">Değişikliği Kaydet</button>
       </div>
     `;
     box.appendChild(card);
@@ -720,28 +710,18 @@ function toggleEdit(key) {
   el.style.display = el.style.display === 'none' ? 'flex' : 'none';
 }
 
-function selectEditOpt(key, optIdx) {
-  editSelections[key] = optIdx;
-  [0, 1, 2].forEach(i => {
-    const btn = document.getElementById(`btn-opt-${key}-${i}`);
-    if (btn) {
-      if (i === optIdx) btn.classList.add('active-opt');
-      else btn.classList.remove('active-opt');
-    }
-  });
-}
-
 async function confirmEdit(dayKeyStr, qIdx) {
-  const optVal = editSelections[dayKeyStr];
+  const optVal = parseInt(document.getElementById(`edit-sel-${dayKeyStr}`).value);
   const reasonVal = document.getElementById(`edit-txt-${dayKeyStr}`).value.trim();
 
   saveAnswerToHistory(dayKeyStr, optVal, reasonVal);
   renderHistory();
-  showNotification("Gerekçe ve cevabınız başarıyla güncellendi.");
+  showNotification("Cevabınız başarıyla güncellendi.");
 
   await sendVote(dayKeyStr, qIdx, optVal, reasonVal);
 }
 
+/* Paylaşılan Cevapları ve Gerekçeleri Özel Tasarımla İşleme */
 async function renderPublicFeed() {
   const box = document.getElementById("publicFeedBox");
   try {
@@ -757,13 +737,17 @@ async function renderPublicFeed() {
 
     box.innerHTML = "";
     published.forEach(item => {
-      const qText = QUESTIONS[item.soru] ? QUESTIONS[item.soru].text : "Soru";
+      const qObj = QUESTIONS[item.soru] || { text: "Soru", options: [] };
+      const ansText = qObj.options[item.cevap] ? `${LETTERS[item.cevap]}) ${qObj.options[item.cevap]}` : item.cevap;
+
       const div = document.createElement("div");
       div.className = "pub-item";
       div.innerHTML = `
-        <div style="font-weight:600; margin-bottom:2px;">${qText}</div>
-        <div style="color:var(--accent); font-weight:600; margin-bottom:4px;">Cevap: ${LETTERS[item.cevap] || item.cevap}</div>
-        <div style="color:var(--muted); font-style:italic;">Gerekçe: "${item.aciklama || 'Belirtilmedi'}"</div>`;
+        <div class="pub-question-title">“${qObj.text}”</div>
+        <div><span class="pub-answer-badge">Verilen Cevap: ${ansText}</span></div>
+        <div class="pub-reason-text">
+          <strong style="color:var(--accent);">Gerekçe:</strong> "${item.aciklama || 'Açıklama veya gerekçe belirtilmedi.'}"
+        </div>`;
       box.appendChild(div);
     });
   } catch (e) {
