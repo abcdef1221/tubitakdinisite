@@ -25,7 +25,6 @@
     --btn-text: #ffffff;
     --border-color: #333333;
   }
-
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -36,7 +35,6 @@
     transition: background 0.2s ease, color 0.2s ease;
     overflow-x: hidden;
   }
-
   header {
     display: flex;
     justify-content: space-between;
@@ -55,6 +53,13 @@
     border-radius: 6px;
   }
   .hamburger-btn:hover { background: var(--bg-color); }
+  .header-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+    flex: 1;
+  }
   .theme-toggle {
     background: var(--card-bg);
     color: var(--text-main);
@@ -64,7 +69,6 @@
     cursor: pointer;
     font-size: 0.85rem;
   }
-
   .nav-drawer {
     height: 100%;
     width: 280px;
@@ -105,10 +109,7 @@
     justify-content: space-between;
     align-items: center;
   }
-  .nav-link-btn:hover {
-    border-color: var(--primary);
-  }
-
+  .nav-link-btn:hover { border-color: var(--primary); }
   .backdrop {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -117,7 +118,6 @@
     z-index: 999;
   }
   .backdrop.show { display: block; }
-
   main { max-width: 960px; margin: 0 auto; padding: 16px; }
   .box {
     background: var(--card-bg);
@@ -128,44 +128,25 @@
     display: flex;
     flex-direction: column;
   }
-
   .dashboard-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     align-items: stretch;
   }
-  .grid-col {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    height: 100%;
-  }
-  .grid-col-left .box {
-    height: 100%;
-    justify-content: space-between;
-  }
-  .grid-col-right {
-    justify-content: space-between;
-  }
-  .grid-col-right .history-panel {
-    flex: 1;
-  }
-  .grid-col-right .verse-panel {
-    flex: 0 0 auto;
-  }
-
+  .grid-col { display: flex; flex-direction: column; gap: 16px; height: 100%; }
+  .grid-col-left .box { height: 100%; justify-content: space-between; }
+  .grid-col-right { justify-content: space-between; }
+  .grid-col-right .history-panel { flex: 1; }
+  .grid-col-right .verse-panel { flex: 0 0 auto; }
   @media (max-width: 768px) {
     .dashboard-grid { grid-template-columns: 1fr; }
   }
-
   .page-view { display: none; }
   .page-view.visible { display: block; }
-
   h2 { font-size: 1.1rem; margin: 0 0 10px; }
   .sub-text { color: var(--text-sub); font-size: 0.9rem; line-height: 1.4; }
   .q-title { font-size: 1.1rem; line-height: 1.5; margin: 10px 0 16px; font-weight: 600; }
-
   .opts-group { display: flex; flex-direction: column; gap: 8px; }
   .opt-btn {
     background: var(--bg-color);
@@ -179,7 +160,6 @@
   }
   .opt-btn:hover { border-color: var(--primary); }
   .opt-btn.picked { border-color: var(--primary); background: var(--primary); color: var(--btn-text); }
-
   textarea {
     width: 100%;
     padding: 10px;
@@ -192,7 +172,6 @@
     margin-top: 10px;
     resize: vertical;
   }
-
   .action-btn {
     background: var(--primary);
     color: var(--btn-text);
@@ -207,7 +186,6 @@
   }
   .action-btn:hover { background: var(--primary-hover); }
   .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
   .quote-box {
     font-style: italic;
     line-height: 1.5;
@@ -216,13 +194,11 @@
     margin: 8px 0;
   }
   .quote-src { color: var(--text-sub); font-size: 0.8rem; }
-
   .stats-wrap { margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px; }
   .stat-item { margin-bottom: 10px; }
   .stat-meta { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 3px; }
   .progress-bg { height: 8px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
   .progress-fill { height: 100%; background: var(--primary); transition: width 0.4s; }
-
   .vakit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
   .vakit-card {
     background: var(--bg-color);
@@ -234,16 +210,15 @@
   .vakit-card .label { font-size: 0.8rem; color: var(--text-sub); }
   .vakit-card .val { font-size: 1.05rem; font-weight: 600; margin-top: 2px; }
   .timer-display { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-align: center; margin: 12px 0 2px; }
-
   .city-select { display: flex; gap: 6px; margin-top: 6px; }
   .city-select input {
-    flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main);
+    flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color);
+    background: var(--bg-color); color: var(--text-main);
   }
   .mini-btn {
     background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color);
     border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem;
   }
-
   .toast-msg {
     background: var(--primary);
     color: var(--btn-text);
@@ -254,7 +229,6 @@
     font-size: 0.9rem;
     text-align: center;
   }
-
   .history-list {
     max-height: 220px;
     overflow-y: auto;
@@ -275,12 +249,25 @@
   .h-r { color: var(--text-sub); font-style: italic; margin-bottom: 4px; word-break: break-word; }
   .edit-area { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
   .edit-area select {
-    padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main);
+    padding: 6px; border-radius: 6px; border: 1px solid var(--border-color);
+    background: var(--card-bg); color: var(--text-main);
   }
-
   .info-block { margin-bottom: 16px; }
   .info-block h3 { color: var(--primary); margin: 0 0 6px; font-size: 1rem; }
   .info-block p { margin: 0; line-height: 1.5; color: var(--text-sub); font-size: 0.92rem; }
+  .kapali-uyari {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .kapali-uyari h2 { color: var(--primary); }
+  footer {
+    text-align: center;
+    padding: 18px;
+    color: var(--text-sub);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 30px;
+  }
 </style>
 </head>
 <body>
@@ -290,21 +277,22 @@
 <div class="nav-drawer" id="drawer">
   <button class="drawer-close" onclick="closeDrawer()">&times;</button>
   <button class="nav-link-btn" onclick="openAboutView()">
-    <span>Biz Kimiz?</span>
-    <span>→</span>
+    <span>Biz Kimiz?</span><span>→</span>
   </button>
 </div>
 
 <header>
   <button class="hamburger-btn" onclick="openDrawer()">☰</button>
+  <div class="header-title">Değerler Eğitimi Projesi</div>
   <button class="theme-toggle" id="themeToggler">🌙 Karanlık</button>
 </header>
 
 <main>
 
+  <!-- SORU SAYFASI -->
   <section class="page-view visible" id="view-q">
-    <div class="box" style="max-width: 580px; margin: 0 auto;">
-      <p class="sub-text" id="qSubHeader"></p>
+    <div class="box" style="max-width:580px; margin:0 auto;">
+      <p class="sub-text" id="qSubHeader">Günün Değerler Sorusu</p>
       <div class="q-title" id="qMainText"></div>
       <div class="opts-group" id="optsContainer"></div>
       <textarea id="userReason" placeholder="Kararının sebebini kısaca yazabilirsin (isteğe bağlı)..."></textarea>
@@ -312,54 +300,61 @@
     </div>
   </section>
 
+  <!-- HADİS + İSTATİSTİK SAYFASI -->
   <section class="page-view" id="view-h">
-    <div class="box" style="max-width: 580px; margin: 0 auto;">
+    <div class="box" style="max-width:580px; margin:0 auto;">
       <h2>Günün Hadisi</h2>
       <div class="quote-box" id="hText"></div>
       <div class="quote-src" id="hSrc"></div>
       <div class="stats-wrap">
         <h2>Diğer Katılımcıların Yanıtları</h2>
-        <div id="statsContent"><p class="sub-text">İstatistikler hesaplanıyor...</p></div>
+        <div id="statsContent"><p class="sub-text">İstatistikler yükleniyor...</p></div>
       </div>
     </div>
   </section>
 
+  <!-- TEŞEKKÜR SAYFASI -->
   <section class="page-view" id="view-thx">
-    <div class="box" style="max-width: 580px; margin: 0 auto; text-align:center; padding: 40px 20px;">
-      <h1 style="color: var(--primary); margin:0 0 10px;">Teşekkür Ederiz!</h1>
+    <div class="box" style="max-width:580px; margin:0 auto; text-align:center; padding:40px 20px;">
+      <h1 style="color:var(--primary); margin:0 0 10px;">Teşekkür Ederiz!</h1>
       <p class="sub-text">Yanıtın başarıyla alındı. Ana sayfaya yönlendiriliyorsun...</p>
     </div>
   </section>
 
+  <!-- HAKKIMIZDA SAYFASI -->
   <section class="page-view" id="view-about">
-    <div class="box" style="max-width: 620px; margin: 0 auto;">
+    <div class="box" style="max-width:620px; margin:0 auto;">
       <h2 style="font-size:1.3rem;">Biz Kimiz?</h2>
-      <div style="height:1px; background:var(--border-color); margin: 8px 0 16px;"></div>
-      
+      <div style="height:1px; background:var(--border-color); margin:8px 0 16px;"></div>
       <div class="info-block">
         <h3>Hakkımızda</h3>
-        <p>Bu platform, gençlerin günlük hayatta karşılaştıkları ahlaki ikilemler ve toplumsal değerler üzerindeki farkındalıklarını ölçmek amacıyla hazırlanmış bir TÜBİTAK araştırma projesidir.Yapımcılar/Yardımcılar:Berend ATASOY,Esat Buğra BOZDAĞ,Mustafa Taha YILDIZ</p>
+        <p>Bu platform, gençlerin günlük hayatta karşılaştıkları ahlaki ikilemler ve toplumsal değerler üzerindeki farkındalıklarını ölçmek amacıyla hazırlanmış bir TÜBİTAK araştırma projesidir. Yapımcılar/Yardımcılar: Berend ATASOY, Esat Buğra BOZDAĞ, Mustafa Taha YILDIZ</p>
       </div>
-
       <div class="info-block">
         <h3>Projenin Amacı</h3>
         <p>Yenilikçi dijital araçlar aracılığıyla değerler eğitimini desteklemek, bireylerin kendi kararlarını sorgulayıp tefekkür etmelerine katkı sunmak ve anonim veriler ışığında empati eğilimlerini analiz etmektir.</p>
       </div>
-
       <div class="info-block">
         <h3>İletişim</h3>
         <p>📧 <strong>Proje E-Posta:</strong><br>
           <a href="mailto:tubitakdinisiteprojesi@gmail.com" style="color:var(--primary); font-weight:600; text-decoration:none;">tubitakdinisiteprojesi@gmail.com</a>
         </p>
       </div>
-
       <button class="action-btn" onclick="showDashboard()">Ana Sayfaya Dön</button>
     </div>
   </section>
 
+  <!-- KAPALI UYARISI -->
+  <section class="page-view" id="view-kapali">
+    <div class="box kapali-uyari" style="max-width:580px; margin:0 auto;">
+      <h2>🔒 Proje Şu An Kapalı</h2>
+      <p class="sub-text">Katılım şu an askıya alınmıştır. Lütfen daha sonra tekrar deneyiniz.</p>
+    </div>
+  </section>
+
+  <!-- ANA SAYFA / DASHBOARD -->
   <section class="page-view" id="view-main">
     <div id="toast" class="toast-msg"></div>
-
     <div class="dashboard-grid">
       <div class="grid-col grid-col-left">
         <div class="box">
@@ -378,7 +373,6 @@
           </div>
         </div>
       </div>
-
       <div class="grid-col grid-col-right">
         <div class="box history-panel">
           <h2>Cevapladığın Sorular</h2>
@@ -386,7 +380,6 @@
             <p class="sub-text">Henüz kayıtlı bir yanıtın bulunmuyor.</p>
           </div>
         </div>
-
         <div class="box verse-panel">
           <h2>Günün Ayeti ve Hikmeti</h2>
           <div class="quote-box" style="font-size:0.88rem;">
@@ -400,7 +393,15 @@
 
 </main>
 
+<footer>
+  © 2025 Değerler Eğitimi Projesi — TÜBİTAK Araştırma Projesi<br>
+  Berend ATASOY · Esat Buğra BOZDAĞ · Mustafa Taha YILDIZ
+</footer>
+
 <script>
+// ============================================================
+// !! BURAYA KENDİ APPS SCRIPT URL'İNİ YAZ !!
+// ============================================================
 const SCRIPT_URL = "BURAYA_APPS_SCRIPT_URL";
 
 const questionBank = [
@@ -425,16 +426,19 @@ const hadithBank = [
   { text: "Hiçbiriniz kendisi için istediğini kardeşi için de istemedikçe tam iman etmiş olmaz.", source: "Buhârî, İman 7" }
 ];
 
+// ============================================================
+// YARDIMCI FONKSİYONLAR
+// ============================================================
 function getFormattedDate() {
   const d = new Date();
-  return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
 }
 
 function calculateDayIndex(dateStr) {
-  const y = parseInt(dateStr.slice(0, 4));
-  const m = parseInt(dateStr.slice(4, 6));
-  const d = parseInt(dateStr.slice(6, 8));
-  return Math.floor(Date.UTC(y, m - 1, d) / 86400000);
+  const y = parseInt(dateStr.slice(0,4));
+  const m = parseInt(dateStr.slice(4,6));
+  const d = parseInt(dateStr.slice(6,8));
+  return Math.floor(Date.UTC(y, m-1, d) / 86400000);
 }
 
 function switchView(viewId) {
@@ -442,69 +446,87 @@ function switchView(viewId) {
   document.getElementById(viewId).classList.add('visible');
 }
 
-function openDrawer() {
-  document.getElementById('drawer').classList.add('active');
-  document.getElementById('backdrop').classList.add('show');
-}
+function openDrawer()  { document.getElementById('drawer').classList.add('active'); document.getElementById('backdrop').classList.add('show'); }
+function closeDrawer() { document.getElementById('drawer').classList.remove('active'); document.getElementById('backdrop').classList.remove('show'); }
+function openAboutView() { closeDrawer(); switchView('view-about'); }
 
-function closeDrawer() {
-  document.getElementById('drawer').classList.remove('active');
-  document.getElementById('backdrop').classList.remove('show');
-}
-
-function openAboutView() {
-  closeDrawer();
-  switchView('view-about');
-}
-
-function fetchUserHistory() {
-  return JSON.parse(localStorage.getItem('user_quiz_history') || '{}');
-}
-
+function fetchUserHistory() { return JSON.parse(localStorage.getItem('user_quiz_history') || '{}'); }
 function storeAnswer(dayKey, optIdx, reasonText) {
   const history = fetchUserHistory();
-  history[dayKey] = {
-    opt: optIdx,
-    reason: reasonText,
-    qIdx: calculateDayIndex(dayKey) % questionBank.length
-  };
+  history[dayKey] = { opt: optIdx, reason: reasonText, qIdx: calculateDayIndex(dayKey) % questionBank.length };
   localStorage.setItem('user_quiz_history', JSON.stringify(history));
 }
 
-const currentDayKey = getFormattedDate();
-const dayOffset = calculateDayIndex(currentDayKey) % questionBank.length;
-const activeQ = questionBank[dayOffset];
-const activeH = hadithBank[dayOffset % hadithBank.length];
-const letterLabels = ["A", "B", "C", "D"];
-
+// ============================================================
+// TEMA
+// ============================================================
 const themeToggler = document.getElementById('themeToggler');
 function setAppTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   themeToggler.textContent = theme === 'dark' ? '☀️ Aydınlık' : '🌙 Karanlık';
   localStorage.setItem('app_theme', theme);
 }
-
-themeToggler.onclick = () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  setAppTheme(current === 'dark' ? 'light' : 'dark');
-};
+themeToggler.onclick = () => setAppTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 setAppTheme(localStorage.getItem('app_theme') || 'light');
 
+// ============================================================
+// SORU BAŞLATMA — Önce sunucudan aktif soruyu al
+// ============================================================
+const currentDayKey = getFormattedDate();
+let activeQ, activeH, dayOffset;
+
+async function initApp() {
+  // Sunucudan ayarları çek
+  let serverSoruIdx = null;
+  let durum = "acik";
+
+  if (!SCRIPT_URL.includes("BURAYA")) {
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
+      const data = await res.json();
+      serverSoruIdx = parseInt(data.aktif_soru);
+      durum = data.durum;
+    } catch(e) {}
+  }
+
+  // Proje kapalıysa kapali ekranı göster
+  if (durum !== "acik") {
+    switchView('view-kapali');
+    return;
+  }
+
+  // Aktif soruyu belirle
+  if (serverSoruIdx !== null && !isNaN(serverSoruIdx)) {
+    dayOffset = serverSoruIdx % questionBank.length;
+  } else {
+    dayOffset = calculateDayIndex(currentDayKey) % questionBank.length;
+  }
+
+  activeQ = questionBank[dayOffset];
+  activeH = hadithBank[dayOffset % hadithBank.length];
+
+  initQuestionView();
+  switchView('view-q');
+}
+
+// ============================================================
+// SORU GÖRÜNÜMÜ
+// ============================================================
 let selectedOption = null;
 
 function initQuestionView() {
   selectedOption = null;
-  document.getElementById('qSubHeader').textContent = "Günün Değerler Sorusu";
   document.getElementById('qMainText').textContent = activeQ.text;
   document.getElementById('userReason').value = "";
   document.getElementById('sendBtn').disabled = true;
 
   const container = document.getElementById('optsContainer');
   container.innerHTML = "";
+  const letters = ["A","B","C","D"];
   activeQ.options.forEach((text, i) => {
     const btn = document.createElement('button');
     btn.className = 'opt-btn';
-    btn.textContent = `${letterLabels[i]}) ${text}`;
+    btn.textContent = `${letters[i]}) ${text}`;
     btn.onclick = () => {
       selectedOption = i;
       document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('picked'));
@@ -515,27 +537,29 @@ function initQuestionView() {
   });
 }
 
+// ============================================================
+// CEVAP GÖNDER
+// ============================================================
 document.getElementById('sendBtn').onclick = async () => {
   if (selectedOption === null) return;
   const reason = document.getElementById('userReason').value.trim();
   document.getElementById('sendBtn').disabled = true;
 
-  const userLogs = fetchUserHistory();
-  const exists = !!userLogs[currentDayKey];
-
+  const alreadyAnswered = !!fetchUserHistory()[currentDayKey];
   storeAnswer(currentDayKey, selectedOption, reason);
 
-  document.getElementById('hText').textContent = `“${activeH.text}”`;
+  document.getElementById('hText').textContent = `"${activeH.text}"`;
   document.getElementById('hSrc').textContent = activeH.source;
   switchView('view-h');
 
+  // Sunucuya gönder
   const resData = await pushVoteData(selectedOption, reason);
   displayStats(resData);
 
   setTimeout(() => {
     switchView('view-thx');
     setTimeout(() => {
-      showDashboard(exists ? "Daha önce cevapladığın soru güncellendi." : "Cevabın başarıyla kaydedildi.");
+      showDashboard(alreadyAnswered ? "Cevabın başarıyla güncellendi." : "Cevabın başarıyla kaydedildi.");
     }, 2200);
   }, 4500);
 };
@@ -543,16 +567,16 @@ document.getElementById('sendBtn').onclick = async () => {
 async function pushVoteData(opt, reason) {
   if (!SCRIPT_URL || SCRIPT_URL.includes("BURAYA")) return null;
   try {
-    const res = await fetch(`${SCRIPT_URL}?action=vote&day=${currentDayKey}&opt=${opt}&reason=${encodeURIComponent(reason)}`);
+    const url = `${SCRIPT_URL}?action=vote&day=${currentDayKey}&soru=${dayOffset}&opt=${opt}&reason=${encodeURIComponent(reason)}`;
+    const res = await fetch(url);
     return await res.json();
-  } catch (e) {
-    return null;
-  }
+  } catch(e) { return null; }
 }
 
 function displayStats(data) {
   const box = document.getElementById('statsContent');
-  if (!data) {
+  const letters = ["A","B","C","D"];
+  if (!data || typeof data !== 'object') {
     box.innerHTML = "<p class='sub-text'>İstatistik verisi alınamadı.</p>";
     return;
   }
@@ -560,22 +584,26 @@ function displayStats(data) {
   box.innerHTML = "";
   activeQ.options.forEach((txt, i) => {
     const count = data[i] || 0;
-    const ratio = total ? Math.round((count / total) * 100) : 0;
+    const ratio = total ? Math.round((count/total)*100) : 0;
     const div = document.createElement('div');
     div.className = 'stat-item';
     div.innerHTML = `
-      <div class="stat-meta"><span>${letterLabels[i]}) ${txt}</span><span>%${ratio}</span></div>
+      <div class="stat-meta"><span>${letters[i]}) ${txt}</span><span>%${ratio} (${count} kişi)</span></div>
       <div class="progress-bg"><div class="progress-fill" style="width:${ratio}%"></div></div>`;
     box.appendChild(div);
   });
 }
 
+// ============================================================
+// GEÇMİŞ LİSTESİ
+// ============================================================
 function renderHistoryList() {
   const box = document.getElementById('historyList');
   const logs = fetchUserHistory();
   const sortedKeys = Object.keys(logs).sort().reverse();
+  const letters = ["A","B","C","D"];
 
-  if (sortedKeys.length === 0) {
+  if (!sortedKeys.length) {
     box.innerHTML = "<p class='sub-text'>Henüz yanıtlanmış bir soru bulunmuyor.</p>";
     return;
   }
@@ -586,20 +614,18 @@ function renderHistoryList() {
     const qObj = questionBank[entry.qIdx] || questionBank[0];
     const card = document.createElement('div');
     card.className = 'history-item';
-
     card.innerHTML = `
       <div class="h-q">${qObj.text}</div>
-      <div class="h-a">Verilen Cevap: ${letterLabels[entry.opt]}) ${qObj.options[entry.opt]}</div>
+      <div class="h-a">Verilen Cevap: ${letters[entry.opt]}) ${qObj.options[entry.opt]}</div>
       <div class="h-r">${entry.reason ? 'Açıklama: "' + entry.reason + '"' : 'Açıklama belirtilmedi.'}</div>
       <button class="mini-btn" onclick="toggleEdit('${k}')">Düzenle</button>
       <div id="edit-box-${k}" class="edit-area" style="display:none;">
         <select id="edit-select-${k}">
-          ${qObj.options.map((o, idx) => `<option value="${idx}" ${idx === entry.opt ? 'selected' : ''}>${letterLabels[idx]})${o}</option>`).join('')}
+          ${qObj.options.map((o,idx) => `<option value="${idx}" ${idx===entry.opt?'selected':''}>${letters[idx]}) ${o}</option>`).join('')}
         </select>
-        <textarea id="edit-txt-${k}" style="min-height:45px;" placeholder="Gerekçeni düzenle">${entry.reason || ''}</textarea>
-        <button class="mini-btn" style="background:var(--primary); color:var(--btn-text);" onclick="confirmEdit('${k}')">Kaydet</button>
-      </div>
-    `;
+        <textarea id="edit-txt-${k}" style="min-height:45px;" placeholder="Gerekçeni düzenle">${entry.reason||''}</textarea>
+        <button class="mini-btn" style="background:var(--primary);color:var(--btn-text);" onclick="confirmEdit('${k}')">Kaydet</button>
+      </div>`;
     box.appendChild(card);
   });
 }
@@ -612,7 +638,6 @@ function toggleEdit(key) {
 function confirmEdit(key) {
   const optVal = parseInt(document.getElementById(`edit-select-${key}`).value);
   const reasonVal = document.getElementById(`edit-txt-${key}`).value.trim();
-
   storeAnswer(key, optVal, reasonVal);
   renderHistoryList();
   pushVoteData(optVal, reasonVal);
@@ -620,14 +645,17 @@ function confirmEdit(key) {
 }
 
 function triggerToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.style.display = 'block';
-  setTimeout(() => { toast.style.display = 'none'; }, 3500);
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3500);
 }
 
-const vakitNames = { Fajr: "İmsak", Dhuhr: "Öğle", Asr: "İkindi", Maghrib: "Akşam", Isha: "Yatsı" };
-const targetKeys = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+// ============================================================
+// EZAN VAKİTLERİ
+// ============================================================
+const vakitNames = { Fajr:"İmsak", Dhuhr:"Öğle", Asr:"İkindi", Maghrib:"Akşam", Isha:"Yatsı" };
+const targetKeys = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 let currentTimes = null;
 
 function showDashboard(msg) {
@@ -637,69 +665,50 @@ function showDashboard(msg) {
   if (msg) triggerToast(msg);
 }
 
-document.getElementById('updateCityBtn').onclick = () => {
-  loadPrayerData(document.getElementById('cityVal').value || "Istanbul");
-};
+document.getElementById('updateCityBtn').onclick = () => loadPrayerData(document.getElementById('cityVal').value || "Istanbul");
 
 async function loadPrayerData(city) {
   try {
     const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=Turkey&method=13`);
     const payload = await res.json();
     currentTimes = payload.data.timings;
-    
     const grid = document.getElementById('vakitGrid');
     grid.innerHTML = "";
     targetKeys.forEach(k => {
       const el = document.createElement('div');
       el.className = 'vakit-card';
-      el.innerHTML = `<div class="label">${vakitNames[k]}</div><div class="val">${currentTimes[k].slice(0, 5)}</div>`;
+      el.innerHTML = `<div class="label">${vakitNames[k]}</div><div class="val">${currentTimes[k].slice(0,5)}</div>`;
       grid.appendChild(el);
     });
-
     document.getElementById('hijriInfo').textContent = `${payload.data.date.readable} • ${payload.data.date.hijri.date} ${payload.data.date.hijri.month.en}`;
-  } catch (err) {
+  } catch(err) {
     document.getElementById('vakitGrid').innerHTML = "<p class='sub-text'>Vakit bilgisi çekilemedi.</p>";
   }
 }
 
-function getTimeInSeconds(timeStr) {
-  const parts = timeStr.slice(0, 5).split(':').map(Number);
-  return (parts[0] * 60 + parts[1]) * 60;
-}
+function getTimeInSeconds(t) { const p = t.slice(0,5).split(':').map(Number); return (p[0]*60+p[1])*60; }
 
 function refreshClock() {
   if (!currentTimes) return;
   const now = new Date();
-  const totalSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-
+  const total = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
   let nextK = null, nextS = null;
   for (const k of targetKeys) {
     const s = getTimeInSeconds(currentTimes[k]);
-    if (s > totalSecs) { nextK = k; nextS = s; break; }
+    if (s > total) { nextK = k; nextS = s; break; }
   }
-
-  let remaining = 0;
-  if (nextK) {
-    remaining = nextS - totalSecs;
-    document.getElementById('targetVakitLabel').textContent = `Sıradaki Vakit: ${vakitNames[nextK]}`;
-  } else {
-    const fajrSecs = getTimeInSeconds(currentTimes.Fajr);
-    remaining = (86400 - totalSecs) + fajrSecs;
-    document.getElementById('targetVakitLabel').textContent = "Sıradaki Vakit: İmsak (Yarın)";
-  }
-
-  const hrs = Math.floor(remaining / 3600);
-  const mins = Math.floor((remaining % 3600) / 60);
-  const secs = remaining % 60;
-
-  document.getElementById('clockCount').textContent = 
-    `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  let remaining = nextK ? nextS - total : (86400 - total) + getTimeInSeconds(currentTimes.Fajr);
+  document.getElementById('targetVakitLabel').textContent = nextK ? `Sıradaki Vakit: ${vakitNames[nextK]}` : "Sıradaki Vakit: İmsak (Yarın)";
+  const h = Math.floor(remaining/3600), m = Math.floor((remaining%3600)/60), s = remaining%60;
+  document.getElementById('clockCount').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
 setInterval(refreshClock, 1000);
 
-initQuestionView();
-switchView('view-q');
+// ============================================================
+// BAŞLAT
+// ============================================================
+initApp();
 </script>
 </body>
 </html>
