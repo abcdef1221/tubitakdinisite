@@ -175,7 +175,7 @@
     border-radius: 12px;
     padding: 14px;
     text-align: left;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
   }
   .option:hover { border-color: var(--accent); }
@@ -266,7 +266,6 @@
     font-size: 0.85rem;
   }
 
-  /* BÜYÜTÜLMÜŞ VE VURGULANMIŞ EN BEĞENİLEN CEVAPLAR BÖLÜMÜ */
   .pub-feed {
     max-height: 380px;
     overflow-y: auto;
@@ -283,7 +282,6 @@
     padding: 16px 18px;
     font-size: 0.95rem;
   }
-  /* Sorunun Özel Farklı Fontu */
   .pub-question-title {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-style: italic;
@@ -293,7 +291,6 @@
     margin-bottom: 10px;
     line-height: 1.5;
   }
-  /* Cevap ve Gerekçenin Öne Çıkarılması */
   .pub-answer-badge {
     display: inline-block;
     background: var(--card);
@@ -433,7 +430,6 @@
       </div>
     </div>
 
-    <!-- Büyütülen ve İçeriği Öne Çıkarılan Yayınlanan Cevaplar Kutusu -->
     <div class="card" style="margin-top: 20px; padding: 24px;">
       <h2 style="font-size: 1.25rem; margin-bottom: 16px;">En Beğenilen / Paylaşılan Cevaplar ve Gerekçeler</h2>
       <div class="pub-feed" id="publicFeedBox">
@@ -446,45 +442,45 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-zf7ds1EF6KGQokmK94F7tNU10Fvp3OIU9V21QzxNpPAATBRprMOWAi4iq2I4b4Npjw/exec";
 
-// Benzersiz kullanıcı kimliği oluşturma (Admin paneline veri düşmesi için)
 let clientId = localStorage.getItem("project_client_id");
 if (!clientId) {
   clientId = "user_" + Math.random().toString(36).substring(2, 15);
   localStorage.setItem("project_client_id", clientId);
 }
 
+// Her soruya özel mantıklı ve özgün seçenekler (Şıklar)
 const QUESTIONS = [
-  "Yolda elinde ağır poşetlerle yürümekte zorlanan birini gördün. Ne yaparsın?",
-  "Sınıfta bir arkadaşının kopya çektiğine şahit oldun. Nasıl davranırsın?",
-  "Sokakta yalnız başına ağlayan küçük bir çocuk gördün. İlk tepkin ne olur?",
-  "Yakın bir arkadaşın sana önemli bir sırrını emanet etti. Başkası sorduğunda ne yaparsın?",
-  "Gece geç saatte komşundan yüksek ses geliyor. Nasıl bir yol izlersin?",
-  "Kapına ihtiyaç sahibi olduğunu söyleyen biri geldi. Ne yaparsın?",
-  "Ramazan ayında komşunun yalnız olduğunu ve yemek yapamadığını fark ettin. Ne yaparsın?",
-  "Bir arkadaşının arkasından asılsız konuşulduğunu duydun. Ne yaparsın?",
-  "Toplu taşımada yaşlı veya hamile birine yer vermeyen birini gördün, ne hissedersin?",
-  "Yerde cüzdan buldun ve içinde yüklü miktar para var. İlk hamlen ne olur?",
-  "Grup ödevinde hiçbir şey yapmayan arkadaşın senin emeğinle yüksek not alacak. Ne yaparsın?",
-  "Bir esnafın parayı yanlışlıkla fazla üstü olarak verdiğini fark ettin. Ne yaparsın?",
-  "Parkta oyun oynarken kazara birinin arabasına zarar verdin, etrafta kimse yok. Ne yaparsın?",
-  "Yardım ettiğin bir kişinin sonradan sana nankörlük yaptığını gördün. Tavrın ne olur?",
-  "Çok yorgun olduğun halde ev işlerinde annene yardım etmen gerekiyor. Ne yaparsın?",
-  "Okulda yardıma muhtaç bir öğrenciye akranları zorbalık yapıyor. Ne yaparsın?",
-  "Sokak hayvanının aç olduğunu gördün, yanında kendi yemeğin var. Ne yaparsın?",
-  "Sosyal medyada bir kişiye haksız yere linç kampanyası başlatıldığını gördün. Ne yaparsın?",
-  "Hatalı olduğunu bildiğin halde gurur yapıp özür dilememek mi, yoksa erdemli davranmak mı?",
-  "Kardeşin veya yakının senin eşyanı izinsiz alıp kırdı ve suçunu gizliyor. Ne yaparsın?",
-  "Bir arkadaşın borç para istedi ama o paraya senin de acil ihtiyacın var. Ne yaparsın?",
-  "Yol kenarında yaralı bir kedi veya kuş buldun, acele yetişmen gereken yer var. Ne yaparsın?",
-  "Sınavda herkes birbirine yardım ediyor ama kurallara göre bu yasak. Ne yaparsın?",
-  "Bir hayır kurumunun bağış stantında görev almanız istendi, vakit ayırır mısın?",
-  "İnsanların arkasından konuşulan bir ortama denk geldin. Nasıl tepki verirsin?",
-  "Gönüllü olarak bir sosyal sorumluluk projesine katılma fırsatın olsa seçimin ne olurdu?",
-  "Birisi size haksızlık yaptığında intikam almayı mı yoksa affetmeyi mi seçersiniz?",
-  "Dilenen bir çocuğa para vermek yerine onunla ilgilenmek mi daha doğrudur?",
-  "Tanımadığınız birine gün içinde sadece tebessüm etmek sizce bir iyilik midir?",
-  "Hayatta en çok hangi değere bağlı kalmaya özen gösteriyorsun?"
-].map(q => ({ text: q, options: ["Hemen ve gönülden destek olurum", "Duruma göre hareket ederim", "Doğrudan müdahale etmem"] }));
+  { text: "Yolda elinde ağır poşetlerle yürümekte zorlanan birini gördün. Ne yaparsın?", options: ["Hemen yanına gidip poşetleri taşımasına yardım ederim.", "Müsaitsem ve yolum üstündeyse yardım teklif ederim.", "Acil işim olduğundan veya çekindiğimden müdahale etmem."] },
+  { text: "Sınıfta bir arkadaşının kopya çektiğine şahit oldun. Nasıl davranırsın?", options: ["Kendisini kibarca uyarırım, bir daha yapmamasını söylerim.", "Kimseye karışmam, herkesin kendi sorumluluğu.", "Durumu öğretmenimize bildiririm."] },
+  { text: "Sokakta yalnız başına ağlayan küçük bir çocuk gördün. İlk tepkin ne olur?", options: ["Hemen yanına gidip sakinleştirmeye ve ailesini bulmaya çalışırım.", "Çevredeki esnafa veya yetkililere haber veririm.", "Kalabalıksa başkası ilgilenir diye düşünüp uzaklaşırım."] },
+  { text: "Yakın bir arkadaşın sana önemli bir sırrını emanet etti. Başkası sorduğunda ne yaparsın?", options: ["Kim olursa olsun asla söylemem, sırrı saklarım.", "Arkadaşıma zarar verecek bir durumsa onu uyarır ya da söylerim.", "Zorda kalırsam konuyu geçiştirir, detay vermem."] },
+  { text: "Gece geç saatte komşundan yüksek ses geliyor. Nasıl bir yol izlersin?", options: ["Sabah polite bir şekilde rahatsız olduğumu söylerim.", "Kapısını çalıp kibarca ses seviyesini düşürmesini rica ederim.", "Doğrudan yönetime veya polise şikayet ederim."] },
+  { text: "Kapına ihtiyaç sahibi olduğunu söyleyen biri geldi. Ne yaparsın?", options: ["Elimden geldiğince evden yiyecek veya maddi yardımda bulunurum.", "Durumunu anlamaya çalışıp güvendiğim bir yardım öneririm.", "Dolandırıcı olabileceğinden şüphelenip kapıyı kapatırım."] },
+  { text: "Ramazan ayında komşunun yalnız olduğunu ve yemek yapamadığını fark ettin. Ne yaparsın?", options: ["Evde hazırladığım iftardan bir tabak da ona götürürüm.", "Birlikte yemek yeme teklifinde bulunur veya yemek ısmarlarım.", "Fark etmeme rağmen kendi işime odaklanırım."] },
+  { text: "Bir arkadaşının arkasından asılsız konuşulduğunu duydun. Ne yaparsın?", options: ["Hemen müdahale edip söylenenlerin yalan olduğunu savunurum.", "Arkadaşımı uyararak arkasından konuşulanları haber veririm.", "Ortamdan uzaklaşırım, dedikoduya ortak olmam."] },
+  { text: "Toplu taşımada yaşlı veya hamile birine yer vermeyen birini gördün, ne hissedersin?", options: ["Kalkıp kendi yerimi verir, duyarsızlığa içimden tepki gösteririm.", "Kibarca uyararak yer vermesini rica ederim.", "Kimseye bir şey söylemeden kendi yoluma bakarım."] },
+  { text: "Yerde cüzdan buldun ve içinde yüklü miktar para var. İlk hamlen ne olur?", options: ["İçindeki kimlik veya kartlardan sahibini bulup ulaştırırım.", "En yakın karakola veya kayıp eşya bürosuna teslim ederim.", "Sahibi bulunmaz diye düşünerek içimde bir ikilem yaşarım."] },
+  { text: "Grup ödevinde hiçbir şey yapmayan arkadaşın senin emeğinle yüksek not alacak. Ne yaparsın?", options: ["Durumu hocaya bildirip kimin ne çalıştığını net açıklarım.", "Arkadaşımla konuşup katkı sağlamasını isterim, bu seferlik idare ederim.", "Hiç sesimi çıkarmam, kırgınlık çıkmasın diye kabullenirim."] },
+  { text: "Bir esnafın parayı yanlışlıkla fazla üstü olarak verdiğini fark ettin. Ne yaparsın?", options: ["Hemen geri dönüp fazlalığı sahibine iade ederim.", "Bir süre tereddüt edip vicdan yaparak geri götürürüm.", "Göz yumup uzaklaşırım, nasıl olsa esnafın hatası derim."] },
+  { text: "Parkta oyun oynarken kazara birinin arabasına zarar verdin, etrafta kimse yok. Ne yaparsın?", options: ["Arabaya bir not bırakıp numaramı yazar, masrafı karşılarım.", "Korkup oradan uzaklaşırım, kimse görmedi diye düşünürüm.", "Çevredeki kameralardan çekinip hemen yetkiliye haber veririm."] },
+  { text: "Yardım ettiğin bir kişinin sonradan sana nankörlük yaptığını gördün. Tavrın ne olur?", options: ["İyiliği Allah rızası için yaptığım için önemsemem, yardımı keserim.", "Hayal kırıklığı yaşar ve bir daha asla o kişiye yardım etmem.", "Yüzüne vurup açıkça sitem ederim."] },
+  { text: "Çok yorgun olduğun halde ev işlerinde annene yardım etmen gerekiyor. Ne yaparsın?", options: ["Yorgunluğumu unutup anneme seve seve yardım ederim.", "Biraz dinlenip sonra işin bir kısmını üstlenirim.", "Çok yorulduğumu söyleyip yardımı ertelemesini isterim."] },
+  { text: "Okulda yardıma muhtaç bir öğrenciye akranları zorbalık yapıyor. Ne yaparsın?", options: ["Hemen araya girip zorbalığa engel olurum ve yönetime bildiririm.", "Mağdur öğrenciye destek olup yalnız olmadığını hissettiririm.", "Başıma bela almamak için sessizce uzaklaşırım."] },
+  { text: "Sokak hayvanının aç olduğunu gördün, yanında kendi yemeğin var. Ne yaparsın?", options: ["Yemeğimi onunla seve seve paylaşırım.", "En yakın marketten veya dükkândan ona mama temin ederim.", "Acelem olduğu için içim sızlasa da yoluma devam ederim."] },
+  { text: "Sosyal medyada bir kişiye haksız yere linç kampanyası başlatıldığını gördün. Ne yaparsın?", options: ["Gerçeği savunarak haksızlığa karşı destek yorumu yazarım.", "Tartışmaya hiç karışmaz, sessiz kalırım.", "Paylaşımı şikayet edip linçe katkı sağlamam."] },
+  { text: "Hatalı olduğunu bildiğin halde gurur yapıp özür dilememek mi, yoksa erdemli davranmak mı?", options: ["Gururumu bir kenara bırakıp hemen özür dilerim.", "Haklı görünmeye çalışıp konuyu kapatmayı tercih ederim.", "Zamanla unutulmasını bekler, özür dilemekten kaçınırım."] },
+  { text: "Kardeşin veya yakının senin eşyanı izinsiz alıp kırdı ve suçunu gizliyor. Ne yaparsın?", options: ["Sakince konuşup dürüst olmasını ister, hatasını telafi etmesini beklerim.", "Sinirlenip kavga çıkarırım ve bir daha eşyama dokunmamasını söylerim.", "Görmezden gelirim ama bir daha asla güvenmem."] },
+  { text: "Bir arkadaşın borç para istedi ama o paraya senin de acil ihtiyacın var. Ne yaparsın?", options: ["Durumumu dürüstçe açıklayıp elimden geldiğince destek olurum.", "Kendi ihtiyacımı öne sürerek kibarca reddederim.", "Kendi ihtiyacımdan vazgeçip paramın tamamını ona veririm."] },
+  { text: "Yol kenarında yaralı bir kedi veya kuş buldun, acele yetişmen gereken yer var. Ne yaparsın?", options: ["Bir veterinere veya barınağa ulaştırıp öyle yola devam ederim.", "Birine haber verip güvenli bir yere almasını rica ederim.", "Geç kalacağım için mecburen arkama bakarak yürümeye devam ederim."] },
+  { text: "Sınavda herkes birbirine yardım ediyor ama kurallara göre bu yasak. Ne yaparsın?", options: ["Kendi bilgimle sınavı tamamlar, kurallara uyarım.", "Baskı altında kalsam da kopya vermem veya almam.", "Arkadaşlarıma yardım etmek zorunda hissedip risk alırım."] },
+  { text: "Bir hayır kurumunun bağış stantında görev almanız istendi, vakit ayırır mısın?", options: ["Büyük bir memnuniyetle gönüllü olarak görev alırım.", "Sadece boş olduğum sınırlı saatlerde destek olurum.", "Yoğun olduğum için kibarca reddederim."] },
+  { text: "İnsanların arkasından konuşulan bir ortama denk geldin. Nasıl tepki verirsin?", options: ["O ortamdan hemen uzaklaşır ya da konuyu kapatmalarını söylerim.", "Dedikoduya katılmam ama sessizce dinlerim.", "Ben de sohbete dahil olurum."] },
+  { text: "Gönüllü olarak bir sosyal sorumluluk projesine katılma fırsatın olsa seçimin ne olurdu?", options: ["Çevre ve sokak hayvanları projelerini seçerdim.", "Eğitim ve çocuklara destek projelerinde yer alırdım.", "Yaşlı bakım ve toplumsal yardımlaşma projelerini tercih ederdim."] },
+  { text: "Birisi size haksızlık yaptığında intikam almayı mı yoksa affetmeyi mi seçersiniz?", options: ["Kesinlikle affetmeyi ve büyüklük göstermeyi seçerim.", "İçimde tutar, mesafeli durur ama intikam almam.", "Yapılan haksızlığı unutmaz, karşılığını vermeyi düşünürüm."] },
+  { text: "Dilenen bir çocuğa para vermek yerine onunla ilgilenmek mi daha doğrudur?", options: ["Para vermek yerine karnını doyurmak veya temel ihtiyaçlarıyla ilgilenmek daha doğrudur.", "İkisi de geçicidir, kalıcı eğitim çözümleri üretilmelidir.", "Sadece nakdi yardımda bulunur geçerim."] },
+  { text: "Tanımadığınız birine gün içinde sadece tebessüm etmek sizce bir iyilik midir?", options: ["Kesinlikle çok büyük ve sadaka değerinde bir iyiliktir.", "İnsanın içini ısıtan küçük ama anlamlı bir adımdır.", "Çok da fazla bir anlamı olmadığını düşünüyorum."] },
+  { text: "Hayatta en çok hangi değere bağlı kalmaya özen gösteriyorsun?", options: ["Dürüstlük ve güvenilirlik her şeyden önce gelir.", "Adalet ve merhamet hayatımın merkezindedir.", "Sevgi, vefa ve sadakat en önemli değerlerimdir."]
+}];
 
 const HADITHS = [
   { text: "Kişi, kardeşinin ihtiyacını gidermekle meşgul olduğu sürece Allah da onun ihtiyacını giderir.", source: "Buhârî, Mezâlim 4" },
@@ -568,13 +564,14 @@ function goToAboutPage() {
   show("view-about");
 }
 
+/* KESİN ÇÖZÜM: Geçmiş kayıtlarını tarihe göre değil, doğrudan Soru Numarasına (qIndex) göre saklıyoruz */
 function getAnswersHistory() {
   return JSON.parse(localStorage.getItem("answers_history") || "{}");
 }
 
-function saveAnswerToHistory(day, optIndex, reason) {
+function saveAnswerToHistory(qIdx, optIndex, reason) {
   const history = getAnswersHistory();
-  history[day] = { opt: optIndex, reason: reason, qIndex: dayIndex };
+  history[qIdx] = { opt: optIndex, reason: reason, qIndex: qIdx, date: todayKey() };
   localStorage.setItem("answers_history", JSON.stringify(history));
 }
 
@@ -595,7 +592,7 @@ let selectedIndex = null;
 
 function renderQuestion() {
   selectedIndex = null;
-  document.getElementById("dayInfo").textContent = "Bugünün sorusu (" + new Date().toLocaleDateString('tr-TR') + ")";
+  document.getElementById("dayInfo").textContent = "Soru #" + (dayIndex + 1) + " (" + new Date().toLocaleDateString('tr-TR') + ")";
   document.getElementById("questionText").textContent = currentQ.text;
   document.getElementById("reasonBox").value = "";
   document.getElementById("submitBtn").disabled = true;
@@ -622,9 +619,10 @@ document.getElementById("submitBtn").onclick = async () => {
   document.getElementById("submitBtn").disabled = true;
 
   const history = getAnswersHistory();
-  const alreadyAnswered = !!history[todayKey()];
+  const alreadyAnswered = !!history[dayIndex];
 
-  saveAnswerToHistory(todayKey(), selectedIndex, reason);
+  // Soru indexine göre kaydet (Eski sorular silinmez, her sorunun kendi kaydı kalır)
+  saveAnswerToHistory(dayIndex, selectedIndex, reason);
 
   document.getElementById("hadithText").textContent = "“" + currentH.text + "”";
   document.getElementById("hadithSrc").textContent = currentH.source;
@@ -675,7 +673,7 @@ function renderResults(counts) {
 function renderHistory() {
   const box = document.getElementById("historyBox");
   const history = getAnswersHistory();
-  const keys = Object.keys(history).sort().reverse();
+  const keys = Object.keys(history).sort((a, b) => b - a);
 
   if (keys.length === 0) {
     box.innerHTML = "<p class='muted'>Henüz cevaplanmış soru bulunmuyor.</p>";
@@ -683,45 +681,44 @@ function renderHistory() {
   }
 
   box.innerHTML = "";
-  keys.forEach(dayKeyStr => {
-    const item = history[dayKeyStr];
+  keys.forEach(qIdxStr => {
+    const item = history[qIdxStr];
     const q = QUESTIONS[item.qIndex] || QUESTIONS[0];
     const card = document.createElement("div");
     card.className = "history-card";
     card.innerHTML = `
-      <div style="font-weight:600; margin-bottom:2px;">${q.text}</div>
+      <div style="font-weight:600; margin-bottom:2px;">Soru #${parseInt(item.qIndex)+1}: ${q.text}</div>
       <div style="color:var(--accent); font-weight:600;">Cevabınız: ${LETTERS[item.opt]}) ${q.options[item.opt]}</div>
       <div style="color:var(--muted); font-style:italic; margin-bottom:8px;">${item.reason ? '"' + item.reason + '"' : 'Açıklama yazılmadı.'}</div>
-      <button class="small-btn" onclick="toggleEdit('${dayKeyStr}')">Düzenle</button>
-      <div id="edit-box-${dayKeyStr}" style="display:none; margin-top:8px; flex-direction:column; gap:6px;">
-        <select id="edit-sel-${dayKeyStr}" style="padding:6px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit;">
+      <button class="small-btn" onclick="toggleEdit('${item.qIndex}')">Düzenle</button>
+      <div id="edit-box-${item.qIndex}" style="display:none; margin-top:8px; flex-direction:column; gap:6px;">
+        <select id="edit-sel-${item.qIndex}" style="padding:6px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit;">
           ${q.options.map((optText, oIdx) => `<option value="${oIdx}" ${oIdx === item.opt ? 'selected' : ''}>${LETTERS[oIdx]})${optText}</option>`).join('')}
         </select>
-        <textarea id="edit-txt-${dayKeyStr}" style="min-height:50px; margin-top:0;" placeholder="Gerekçeni düzenle">${item.reason || ''}</textarea>
-        <button class="small-btn" style="background:var(--accent); color:var(--on-accent); border:none;" onclick="confirmEdit('${dayKeyStr}', ${item.qIndex})">Değişikliği Kaydet</button>
+        <textarea id="edit-txt-${item.qIndex}" style="min-height:50px; margin-top:0;" placeholder="Gerekçeni düzenle">${item.reason || ''}</textarea>
+        <button class="small-btn" style="background:var(--accent); color:var(--on-accent); border:none;" onclick="confirmEdit(${item.qIndex})">Değişikliği Kaydet</button>
       </div>
     `;
     box.appendChild(card);
   });
 }
 
-function toggleEdit(key) {
-  const el = document.getElementById(`edit-box-${key}`);
+function toggleEdit(qIdx) {
+  const el = document.getElementById(`edit-box-${qIdx}`);
   el.style.display = el.style.display === 'none' ? 'flex' : 'none';
 }
 
-async function confirmEdit(dayKeyStr, qIdx) {
-  const optVal = parseInt(document.getElementById(`edit-sel-${dayKeyStr}`).value);
-  const reasonVal = document.getElementById(`edit-txt-${dayKeyStr}`).value.trim();
+async function confirmEdit(qIdx) {
+  const optVal = parseInt(document.getElementById(`edit-sel-${qIdx}`).value);
+  const reasonVal = document.getElementById(`edit-txt-${qIdx}`).value.trim();
 
-  saveAnswerToHistory(dayKeyStr, optVal, reasonVal);
+  saveAnswerToHistory(qIdx, optVal, reasonVal);
   renderHistory();
   showNotification("Cevabınız başarıyla güncellendi.");
 
-  await sendVote(dayKeyStr, qIdx, optVal, reasonVal);
+  await sendVote(todayKey(), qIdx, optVal, reasonVal);
 }
 
-/* Paylaşılan Cevapları ve Gerekçeleri Özel Tasarımla İşleme */
 async function renderPublicFeed() {
   const box = document.getElementById("publicFeedBox");
   try {
@@ -836,27 +833,32 @@ function updateCountdown() {
 }
 setInterval(updateCountdown, 1000);
 
-async function initApp() {
-  try {
-    const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
-    const data = await res.json();
-    if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
-      const sIdx = parseInt(data.aktif_soru);
-      if (!isNaN(sIdx) && sIdx >= 0 && sIdx < QUESTIONS.length) {
-        dayIndex = sIdx;
-        currentQ = QUESTIONS[dayIndex];
-        currentH = HADITHS[dayIndex];
-        currentV = VERSES[dayIndex];
-      }
-    }
-  } catch(e) {}
-
+function initApp() {
+  // 1. ANINDA GÖSTER (0 gecikme)
   document.getElementById("verseText").textContent = `“${currentV.text}”`;
   document.getElementById("verseSrc").textContent = currentV.source;
-  
   renderQuestion();
   show("view-question");
   loadPrayerTimes("Istanbul");
+
+  // 2. ARKA PLANDAN AKTİF SORUYU GÜNCELLE
+  fetch(`${SCRIPT_URL}?action=getSettings`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
+        const sIdx = parseInt(data.aktif_soru);
+        if (!isNaN(sIdx) && sIdx >= 0 && sIdx < QUESTIONS.length && sIdx !== dayIndex) {
+          dayIndex = sIdx;
+          currentQ = QUESTIONS[dayIndex];
+          currentH = HADITHS[dayIndex];
+          currentV = VERSES[dayIndex];
+          document.getElementById("verseText").textContent = `“${currentV.text}”`;
+          document.getElementById("verseSrc").textContent = currentV.source;
+          renderQuestion();
+        }
+      }
+    })
+    .catch(e => {});
 }
 
 initApp();
