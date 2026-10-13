@@ -266,7 +266,6 @@
     font-size: 0.85rem;
   }
 
-  /* BÜYÜTÜLMÜŞ VE VURGULANMIŞ EN BEĞENİLEN CEVAPLAR BÖLÜMÜ */
   .pub-feed {
     max-height: 380px;
     overflow-y: auto;
@@ -283,7 +282,6 @@
     padding: 16px 18px;
     font-size: 0.95rem;
   }
-  /* Sorunun Özel Farklı Fontu */
   .pub-question-title {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-style: italic;
@@ -293,7 +291,6 @@
     margin-bottom: 10px;
     line-height: 1.5;
   }
-  /* Cevap ve Gerekçenin Öne Çıkarılması */
   .pub-answer-badge {
     display: inline-block;
     background: var(--card);
@@ -433,7 +430,6 @@
       </div>
     </div>
 
-    <!-- Büyütülen ve İçeriği Öne Çıkarılan Yayınlanan Cevaplar Kutusu -->
     <div class="card" style="margin-top: 20px; padding: 24px;">
       <h2 style="font-size: 1.25rem; margin-bottom: 16px;">En Beğenilen / Paylaşılan Cevaplar ve Gerekçeler</h2>
       <div class="pub-feed" id="publicFeedBox">
@@ -446,7 +442,6 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-zf7ds1EF6KGQokmK94F7tNU10Fvp3OIU9V21QzxNpPAATBRprMOWAi4iq2I4b4Npjw/exec";
 
-// Benzersiz kullanıcı kimliği oluşturma (Admin paneline veri düşmesi için)
 let clientId = localStorage.getItem("project_client_id");
 if (!clientId) {
   clientId = "user_" + Math.random().toString(36).substring(2, 15);
@@ -507,7 +502,7 @@ const HADITHS = [
   { text: "Hakiki zenginlik, mal zenginliği değil, gönül zenginliğidir.", source: "Buhârî, Rikāk 7" },
   { text: "Ameller niyetlere göredir.", source: "Buhârî, Bed'ül-Vahy 1" },
   { text: "Kim Allah'a ve ahiret gününe inanıyorsa, ya hayır söylesin ya da sussun.", source: "Buhârî, Edeb 31" },
-  { text: "İlim öğrenmek her müslümana farzdır.", source: "İbn Mâce, Mukaddime 17" },
+  { text: "İlim öğrenmek her müslümana farzdır.", source: "Ibn Mâce, Mukaddime 17" },
   { text: "Temizlik imanın yarısıdır.", source: "Müslim, Tahâret 1" },
   { text: "Müminin niyeti amelinden hayırlıdır.", source: "Aclûnî, Keşfül-Hafâ 2/280" },
   { text: "Zulümden sakınınız; çünkü zulüm, kıyamet günü karanlıklar olacaktır.", source: "Müslim, Birr 56" },
@@ -721,7 +716,6 @@ async function confirmEdit(dayKeyStr, qIdx) {
   await sendVote(dayKeyStr, qIdx, optVal, reasonVal);
 }
 
-/* Paylaşılan Cevapları ve Gerekçeleri Özel Tasarımla İşleme */
 async function renderPublicFeed() {
   const box = document.getElementById("publicFeedBox");
   try {
@@ -836,27 +830,32 @@ function updateCountdown() {
 }
 setInterval(updateCountdown, 1000);
 
-async function initApp() {
-  try {
-    const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
-    const data = await res.json();
-    if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
-      const sIdx = parseInt(data.aktif_soru);
-      if (!isNaN(sIdx) && sIdx >= 0 && sIdx < QUESTIONS.length) {
-        dayIndex = sIdx;
-        currentQ = QUESTIONS[dayIndex];
-        currentH = HADITHS[dayIndex];
-        currentV = VERSES[dayIndex];
-      }
-    }
-  } catch(e) {}
-
+function initApp() {
+  // 1. ANINDA GÖSTER (Sıfır gecikme - yerel tarih endeksine göre hemen yüklenir)
   document.getElementById("verseText").textContent = `“${currentV.text}”`;
   document.getElementById("verseSrc").textContent = currentV.source;
-  
   renderQuestion();
   show("view-question");
   loadPrayerTimes("Istanbul");
+
+  // 2. ARKA PLAN KONTROLÜ (Admin özel bir soru seçtiyse sessizce günceller)
+  fetch(`${SCRIPT_URL}?action=getSettings`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
+        const sIdx = parseInt(data.aktif_soru);
+        if (!isNaN(sIdx) && sIdx >= 0 && sIdx < QUESTIONS.length && sIdx !== dayIndex) {
+          dayIndex = sIdx;
+          currentQ = QUESTIONS[dayIndex];
+          currentH = HADITHS[dayIndex];
+          currentV = VERSES[dayIndex];
+          document.getElementById("verseText").textContent = `“${currentV.text}”`;
+          document.getElementById("verseSrc").textContent = currentV.source;
+          renderQuestion();
+        }
+      }
+    })
+    .catch(e => {});
 }
 
 initApp();
