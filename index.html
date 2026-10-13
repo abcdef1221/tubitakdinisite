@@ -27,7 +27,6 @@
   }
   * { box-sizing: border-box; }
   
-  /* Yumuşak Tema Geçiş Efekti */
   body, .card, header, .sidebar, .option, textarea, input, .small-btn, .prayer-item, .history-card, .pub-item {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
@@ -340,8 +339,8 @@
   <!-- SORU EKRANI -->
   <section class="view active" id="view-question">
     <div class="card" style="max-width: 600px; margin: 0 auto;">
-      <p class="muted" id="dayInfo"></p>
-      <p class="question" id="questionText"></p>
+      <p class="muted" id="dayInfo">Soru Yükleniyor...</p>
+      <p class="question" id="questionText">Lütfen bekleyiniz...</p>
       <div class="options" id="options"></div>
       <textarea id="reasonBox" placeholder="Sebebini yazmak istersen buraya yazabilirsin (isteğe bağlı)"></textarea>
       <button class="btn" id="submitBtn" disabled>Cevabı Gönder</button>
@@ -448,13 +447,12 @@ if (!clientId) {
   localStorage.setItem("project_client_id", clientId);
 }
 
-// Her soruya özel mantıklı ve özgün seçenekler (Şıklar)
 const QUESTIONS = [
   { text: "Yolda elinde ağır poşetlerle yürümekte zorlanan birini gördün. Ne yaparsın?", options: ["Hemen yanına gidip poşetleri taşımasına yardım ederim.", "Müsaitsem ve yolum üstündeyse yardım teklif ederim.", "Acil işim olduğundan veya çekindiğimden müdahale etmem."] },
   { text: "Sınıfta bir arkadaşının kopya çektiğine şahit oldun. Nasıl davranırsın?", options: ["Kendisini kibarca uyarırım, bir daha yapmamasını söylerim.", "Kimseye karışmam, herkesin kendi sorumluluğu.", "Durumu öğretmenimize bildiririm."] },
   { text: "Sokakta yalnız başına ağlayan küçük bir çocuk gördün. İlk tepkin ne olur?", options: ["Hemen yanına gidip sakinleştirmeye ve ailesini bulmaya çalışırım.", "Çevredeki esnafa veya yetkililere haber veririm.", "Kalabalıksa başkası ilgilenir diye düşünüp uzaklaşırım."] },
   { text: "Yakın bir arkadaşın sana önemli bir sırrını emanet etti. Başkası sorduğunda ne yaparsın?", options: ["Kim olursa olsun asla söylemem, sırrı saklarım.", "Arkadaşıma zarar verecek bir durumsa onu uyarır ya da söylerim.", "Zorda kalırsam konuyu geçiştirir, detay vermem."] },
-  { text: "Gece geç saatte komşundan yüksek ses geliyor. Nasıl bir yol izlersin?", options: ["Sabah polite bir şekilde rahatsız olduğumu söylerim.", "Kapısını çalıp kibarca ses seviyesini düşürmesini rica ederim.", "Doğrudan yönetime veya polise şikayet ederim."] },
+  { text: "Gece geç saatte komşundan yüksek ses geliyor. Nasıl bir yol izlersin?", options: ["Sabah kibar bir şekilde rahatsız olduğumu söylerim.", "Kapısını çalıp kibarca ses seviyesini düşürmesini rica ederim.", "Doğrudan yönetime veya polise şikayet ederim."] },
   { text: "Kapına ihtiyaç sahibi olduğunu söyleyen biri geldi. Ne yaparsın?", options: ["Elimden geldiğince evden yiyecek veya maddi yardımda bulunurum.", "Durumunu anlamaya çalışıp güvendiğim bir yardım öneririm.", "Dolandırıcı olabileceğinden şüphelenip kapıyı kapatırım."] },
   { text: "Ramazan ayında komşunun yalnız olduğunu ve yemek yapamadığını fark ettin. Ne yaparsın?", options: ["Evde hazırladığım iftardan bir tabak da ona götürürüm.", "Birlikte yemek yeme teklifinde bulunur veya yemek ısmarlarım.", "Fark etmeme rağmen kendi işime odaklanırım."] },
   { text: "Bir arkadaşının arkasından asılsız konuşulduğunu duydun. Ne yaparsın?", options: ["Hemen müdahale edip söylenenlerin yalan olduğunu savunurum.", "Arkadaşımı uyararak arkasından konuşulanları haber veririm.", "Ortamdan uzaklaşırım, dedikoduya ortak olmam."] },
@@ -479,8 +477,8 @@ const QUESTIONS = [
   { text: "Birisi size haksızlık yaptığında intikam almayı mı yoksa affetmeyi mi seçersiniz?", options: ["Kesinlikle affetmeyi ve büyüklük göstermeyi seçerim.", "İçimde tutar, mesafeli durur ama intikam almam.", "Yapılan haksızlığı unutmaz, karşılığını vermeyi düşünürüm."] },
   { text: "Dilenen bir çocuğa para vermek yerine onunla ilgilenmek mi daha doğrudur?", options: ["Para vermek yerine karnını doyurmak veya temel ihtiyaçlarıyla ilgilenmek daha doğrudur.", "İkisi de geçicidir, kalıcı eğitim çözümleri üretilmelidir.", "Sadece nakdi yardımda bulunur geçerim."] },
   { text: "Tanımadığınız birine gün içinde sadece tebessüm etmek sizce bir iyilik midir?", options: ["Kesinlikle çok büyük ve sadaka değerinde bir iyiliktir.", "İnsanın içini ısıtan küçük ama anlamlı bir adımdır.", "Çok da fazla bir anlamı olmadığını düşünüyorum."] },
-  { text: "Hayatta en çok hangi değere bağlı kalmaya özen gösteriyorsun?", options: ["Dürüstlük ve güvenilirlik her şeyden önce gelir.", "Adalet ve merhamet hayatımın merkezindedir.", "Sevgi, vefa ve sadakat en önemli değerlerimdir."]
-}];
+  { text: "Hayatta en çok hangi değere bağlı kalmaya özen gösteriyorsun?", options: ["Dürüstlük ve güvenilirlik her şeyden önce gelir.", "Adalet ve merhamet hayatımın merkezindedir.", "Sevgi, vefa ve sadakat en önemli değerlerimdir."] }
+];
 
 const HADITHS = [
   { text: "Kişi, kardeşinin ihtiyacını gidermekle meşgul olduğu sürece Allah da onun ihtiyacını giderir.", source: "Buhârî, Mezâlim 4" },
@@ -564,13 +562,13 @@ function goToAboutPage() {
   show("view-about");
 }
 
-/* KESİN ÇÖZÜM: Geçmiş kayıtlarını tarihe göre değil, doğrudan Soru Numarasına (qIndex) göre saklıyoruz */
 function getAnswersHistory() {
   return JSON.parse(localStorage.getItem("answers_history") || "{}");
 }
 
 function saveAnswerToHistory(qIdx, optIndex, reason) {
   const history = getAnswersHistory();
+  // Soru numarasına göre tekil kayıt yapıyoruz
   history[qIdx] = { opt: optIndex, reason: reason, qIndex: qIdx, date: todayKey() };
   localStorage.setItem("answers_history", JSON.stringify(history));
 }
@@ -621,7 +619,6 @@ document.getElementById("submitBtn").onclick = async () => {
   const history = getAnswersHistory();
   const alreadyAnswered = !!history[dayIndex];
 
-  // Soru indexine göre kaydet (Eski sorular silinmez, her sorunun kendi kaydı kalır)
   saveAnswerToHistory(dayIndex, selectedIndex, reason);
 
   document.getElementById("hadithText").textContent = "“" + currentH.text + "”";
@@ -719,6 +716,7 @@ async function confirmEdit(qIdx) {
   await sendVote(todayKey(), qIdx, optVal, reasonVal);
 }
 
+/* YAYINLANAN CEVAPLARDA HER SORUDAN SADECE EN SONUNCUSUNU GÖSTERME (Gruplama) */
 async function renderPublicFeed() {
   const box = document.getElementById("publicFeedBox");
   try {
@@ -732,8 +730,14 @@ async function renderPublicFeed() {
       return;
     }
 
-    box.innerHTML = "";
+    // Her sorudan SADECE EN SON verilen cevabı tutuyoruz (Mükerrer soru engelleme)
+    const uniquePublishedMap = new Map();
     published.forEach(item => {
+      uniquePublishedMap.set(String(item.soru), item);
+    });
+
+    box.innerHTML = "";
+    uniquePublishedMap.forEach(item => {
       const qObj = QUESTIONS[item.soru] || { text: "Soru", options: [] };
       const ansText = qObj.options[item.cevap] ? `${LETTERS[item.cevap]}) ${qObj.options[item.cevap]}` : item.cevap;
 
@@ -833,32 +837,30 @@ function updateCountdown() {
 }
 setInterval(updateCountdown, 1000);
 
-function initApp() {
-  // 1. ANINDA GÖSTER (0 gecikme)
-  document.getElementById("verseText").textContent = `“${currentV.text}”`;
-  document.getElementById("verseSrc").textContent = currentV.source;
-  renderQuestion();
-  show("view-question");
+// TEK AŞAMALI YÜKLEME (Sunucuyu Bekler, Ekranda Değişip Durmaz)
+async function initApp() {
   loadPrayerTimes("Istanbul");
 
-  // 2. ARKA PLANDAN AKTİF SORUYU GÜNCELLE
-  fetch(`${SCRIPT_URL}?action=getSettings`)
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
-        const sIdx = parseInt(data.aktif_soru);
-        if (!isNaN(sIdx) && sIdx >= 0 && sIdx < QUESTIONS.length && sIdx !== dayIndex) {
-          dayIndex = sIdx;
-          currentQ = QUESTIONS[dayIndex];
-          currentH = HADITHS[dayIndex];
-          currentV = VERSES[dayIndex];
-          document.getElementById("verseText").textContent = `“${currentV.text}”`;
-          document.getElementById("verseSrc").textContent = currentV.source;
-          renderQuestion();
-        }
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
+    const data = await res.json();
+    if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
+      const sIdx = parseInt(data.aktif_soru);
+      if (!isNaN(sIdx) && sIdx >= 0 && sIdx < QUESTIONS.length) {
+        dayIndex = sIdx;
       }
-    })
-    .catch(e => {});
+    }
+  } catch (e) {}
+
+  currentQ = QUESTIONS[dayIndex];
+  currentH = HADITHS[dayIndex];
+  currentV = VERSES[dayIndex];
+
+  document.getElementById("verseText").textContent = `“${currentV.text}”`;
+  document.getElementById("verseSrc").textContent = currentV.source;
+
+  renderQuestion();
+  show("view-question");
 }
 
 initApp();
