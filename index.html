@@ -237,11 +237,6 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzv1nkAacPrQWz_x6i1ufuQOCv8vKDTqjDMwE8cQ3Xckl1vDTJIvkhnFvBl7LOYRWGlpA/exec";
 
-/* ============================================================
-   ORTAK VERİ BLOĞU — admin.html ile birebir aynı olmalı
-   (soru sırası / ayet sırası / hadis sırası index'lere bağlı)
-   ============================================================ */
-
 const QUESTIONS = [
   { text: "Yolda elinde ağır poşetlerle yürümekte zorlanan birini gördün. Ne yaparsın?", options: ["Hemen yanına gidip poşetleri taşımasına yardım ederim.", "Müsaitsem ve yolum üstündeyse yardım teklif ederim.", "Acil işim olduğundan veya çekindiğimden müdahale etmem."] },
   { text: "Sınıfta bir arkadaşının kopya çektiğine şahit oldun. Nasıl davranırsın?", options: ["Kendisini kibarca uyarırım, bir daha yapmamasını söylerim.", "Kimseye karışmam, herkesin kendi sorumluluğu.", "Durumu öğretmenimize bildiririm."] },
@@ -254,7 +249,7 @@ const QUESTIONS = [
   { text: "Toplu taşımada yaşlı veya hamile birine yer vermeyen birini gördün, ne hissedersin?", options: ["Kalkıp kendi yerimi verir, duyarsızlığa içimden tepki gösteririm.", "Kibarca uyararak yer vermesini rica ederim.", "Kimseye bir şey söylemeden kendi yoluma bakarım."] },
   { text: "Yerde cüzdan buldun ve içinde yüklü miktar para var. İlk hamlen ne olur?", options: ["İçindeki kimlik veya kartlardan sahibini bulup ulaştırırım.", "En yakın karakola veya kayıp eşya bürosuna teslim ederim.", "Sahibi bulunmaz diye düşünerek içimde bir ikilem yaşarım."] },
   { text: "Grup ödevinde hiçbir şey yapmayan arkadaşın senin emeğinle yüksek not alacak. Ne yaparsın?", options: ["Durumu hocaya bildirip kimin ne çalıştığını net açıklarım.", "Arkadaşımla konuşup katkı sağlamasını isterim, bu seferlik idare ederim.", "Hiç sesimi çıkarmam, kırgınlık çıkmasın diye kabullenirim."] },
-  { text: "Bir esnafın parayı yanlışlıkla fazla üstü olarak verdiğini fark ettin. Ne yaparsın?", options: ["Hemen geri dönüp fazlalığı sahibine iade ederim.", "Bir süre tereddüt edip vicdan yaparak geri götürürüm.", "Göz yumup uzaklaşırım, nasıl olsa esnafın hatası derim."] },
+  { text: "Bir esnafın para üstünü yanlışlıkla fazla verdiğini fark ettin. Ne yaparsın?", options: ["Hemen geri dönüp fazlalığı sahibine iade ederim.", "Bir süre tereddüt edip vicdan yaparak geri götürürüm.", "Göz yumup uzaklaşırım, nasıl olsa esnafın hatası derim."] },
   { text: "Parkta oyun oynarken kazara birinin arabasına zarar verdin, etrafta kimse yok. Ne yaparsın?", options: ["Arabaya bir not bırakıp numaramı yazar, masrafı karşılarım.", "Korkup oradan uzaklaşırım, kimse görmedi diye düşünürüm.", "Çevredeki kameralardan çekinip hemen yetkiliye haber veririm."] },
   { text: "Yardım ettiğin bir kişinin sonradan sana nankörlük yaptığını gördün. Tavrın ne olur?", options: ["İyiliği Allah rızası için yaptığım için önemsemem, yardımı keserim.", "Hayal kırıklığı yaşar ve bir daha asla o kişiye yardım etmem.", "Yüzüne vurup açıkça sitem ederim."] },
   { text: "Çok yorgun olduğun halde ev işlerinde annene yardım etmen gerekiyor. Ne yaparsın?", options: ["Yorgunluğumu unutup anneme seve seve yardım ederim.", "Biraz dinlenip sonra işin bir kısmını üstlenirim.", "Çok yorulduğumu söyleyip yardımı ertelemesini isterim."] },
@@ -275,7 +270,6 @@ const QUESTIONS = [
   { text: "Hayatta en çok hangi değere bağlı kalmaya özen gösteriyorsun?", options: ["Dürüstlük ve güvenilirlik her şeyden önce gelir.", "Adalet ve merhamet hayatımın merkezindedir.", "Sevgi, vefa ve sadakat en önemli değerlerimdir."] }
 ];
 
-/* Günün ayeti havuzu: arapça + meal. Sıra numarası = index + 1 */
 const VERSES = [
   { source: "Nahl Suresi, 90. Ayet",
     ar: "إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالْإِحْسَانِ وَإِيتَاءِ ذِي الْقُرْبَىٰ وَيَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ وَالْبَغْيِ يَعِظُكُمْ لَعَلَّكُمْ تَذَكَّرُونَ",
@@ -375,7 +369,6 @@ const VERSES = [
     tr: "Allah'ın sana verdikleriyle ahiret yurdunu ara; dünyadaki payını da unutma. Allah sana nasıl iyilik ettiyse, sen de öyle iyilik et." }
 ];
 
-/* Günün hadisi havuzu */
 const HADITHS = [
   { text: "Kişi, kardeşinin ihtiyacını gidermekle meşgul olduğu sürece Allah da onun ihtiyacını giderir.", source: "Buhârî, Mezâlim 4" },
   { text: "Müslüman, elinden ve dilinden insanların emin olduğu kimsedir.", source: "Buhârî, İman 4" },
@@ -409,8 +402,6 @@ const HADITHS = [
   { text: "Gerçek pehlivan, öfkelendiğinde kendini tutabilendir.", source: "Buhârî, Edeb 76" }
 ];
 
-/* Soruya özel ayet / hadis: index sırası QUESTIONS ile birebir aynı olmalı.
-   'ar' alanı varsa ayet, yoksa hadis olarak gösterilir. */
 const QUESTION_REFS = [
   { source: "Mâide Suresi, 2. Ayet",
     ar: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ وَلَا تَعَاوَنُوا عَلَى الْإِثْمِ وَالْعُدْوَانِ",
@@ -478,8 +469,6 @@ const QUESTION_REFS = [
 
 const LETTERS = ["A", "B", "C"];
 
-/* ---------------- yardımcı fonksiyonlar ---------------- */
-
 function escapeHtml(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -491,7 +480,6 @@ function todayKey(d) {
   return x.getFullYear() + String(x.getMonth() + 1).padStart(2, "0") + String(x.getDate()).padStart(2, "0");
 }
 
-/* Yerel tarihe göre geçen tam gün sayısı; gece 00:00'da kendiliğinden artar. */
 function localDayCount(d) {
   const x = d || new Date();
   return Math.floor(Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()) / 86400000);
@@ -501,7 +489,6 @@ function mod(n, m) { return ((n % m) + m) % m; }
 
 function moduloList(arr, n) { return arr[mod(n, arr.length)]; }
 
-/* "3|20261021" -> 20261021 bugünse 3; "auto"/boş/eski format -> null */
 function readPinnedIndex(raw) {
   if (raw === undefined || raw === null) return null;
   const s = String(raw).trim();
@@ -513,8 +500,6 @@ function readPinnedIndex(raw) {
   if (parts[1] !== todayKey()) return null;
   return idx;
 }
-
-/* ---------------- günlük içerik hesabı ---------------- */
 
 let settings = {};
 let daily = { questionIdx: 0, verseIdx: 0, hadithIdx: 0, pinned: { q: false, a: false, h: false } };
@@ -541,8 +526,6 @@ function currentQuestion() { return QUESTIONS[daily.questionIdx]; }
 function currentVerse() { return VERSES[daily.verseIdx]; }
 function currentDayHadith() { return HADITHS[daily.hadithIdx]; }
 function currentQuestionRef() { return QUESTION_REFS[daily.questionIdx]; }
-
-/* ---------------- görünümler / menü ---------------- */
 
 function activeViewId() {
   const v = document.querySelector(".view.active");
@@ -584,8 +567,6 @@ function openDailyQuestion() {
   show("view-question");
 }
 
-/* ---------------- yerel kayıt ---------------- */
-
 function getAnswersHistory() {
   try {
     const raw = JSON.parse(localStorage.getItem("answers_history") || "{}");
@@ -606,8 +587,6 @@ function answeredToday() {
   return !!(item && item.date === todayKey());
 }
 
-/* ---------------- tema ---------------- */
-
 const themeBtn = document.getElementById("themeBtn");
 function applyTheme(t) {
   document.documentElement.setAttribute("data-theme", t);
@@ -618,8 +597,6 @@ themeBtn.onclick = () => {
   applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
 };
 applyTheme(localStorage.getItem("theme") || "light");
-
-/* ---------------- backend ---------------- */
 
 async function callApi(params) {
   const query = new URLSearchParams(params).toString();
@@ -649,8 +626,6 @@ async function sendVote(dayStr, qIdx, opt, reason) {
     return null;
   }
 }
-
-/* ---------------- soru ekranı ---------------- */
 
 let clientId = localStorage.getItem("project_client_id");
 if (!clientId) {
@@ -743,7 +718,6 @@ document.getElementById("submitBtn").onclick = async () => {
 
   saveAnswerToHistory(daily.questionIdx, selectedIndex, reason);
 
-  /* Soruya özel ayet / hadis (günün ayetinden bağımsız) */
   const ref = currentQuestionRef();
   const isVerse = !!ref.ar;
   document.getElementById("refTitle").textContent = "Soruyla İlgili " + (isVerse ? "Ayet" : "Hadis");
@@ -798,8 +772,6 @@ function renderResults(counts, q) {
   });
 }
 
-/* ---------------- günün ayeti kartı ---------------- */
-
 function renderVerseCard() {
   const v = currentVerse();
   const h = currentDayHadith();
@@ -809,8 +781,6 @@ function renderVerseCard() {
   document.getElementById("dayHadithText").textContent = "“" + h.text + "”";
   document.getElementById("dayHadithSrc").textContent = h.source + (daily.pinned.h ? " • elle seçildi" : "");
 }
-
-/* ---------------- geçmiş / paylaşımlar ---------------- */
 
 function renderHistory() {
   const box = document.getElementById("historyBox");
@@ -908,8 +878,6 @@ function showNotification(msg) {
   setTimeout(() => { n.style.display = "none"; }, 4000);
 }
 
-/* ---------------- ezan vakitleri ---------------- */
-
 const PRAYER_NAMES = { Fajr: "İmsak", Dhuhr: "Öğle", Asr: "İkindi", Maghrib: "Akşam", Isha: "Yatsı" };
 const SHOW_KEYS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 let timesData = null;
@@ -988,8 +956,6 @@ function updateCountdown() {
 
 setInterval(updateCountdown, 1000);
 
-/* ---------------- gün değişimi (00:00) ---------------- */
-
 let seenDayKey = todayKey();
 let rolloverRunning = false;
 
@@ -1033,8 +999,6 @@ function scheduleMidnightCheck() {
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && todayKey() !== seenDayKey) handleNewDay();
 });
-
-/* ---------------- başlangıç ---------------- */
 
 async function initApp() {
   const storedCity = localStorage.getItem("prayer_city");
