@@ -22,7 +22,7 @@
   .menu-btn { font-size: 1.5rem; background: none; border: none; color: var(--text); cursor: pointer; padding: 4px 8px; border-radius: 8px; }
   .menu-btn:hover { background: var(--bg); }
   .theme-btn { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; cursor: pointer; }
-  
+
   .sidebar { height: 100%; width: 300px; position: fixed; top: 0; left: -300px; background-color: var(--card); border-right: 1px solid var(--border); transition: left 0.3s ease; z-index: 1000; padding: 24px; box-shadow: 4px 0 16px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
   .sidebar.open { left: 0; }
   .close-sidebar { align-self: flex-end; background: none; border: none; font-size: 1.5rem; color: var(--text); cursor: pointer; }
@@ -59,7 +59,11 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .hadith { font-style: italic; line-height: 1.6; border-left: 4px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  .hadith-ar { direction: rtl; text-align: right; font-family: "Traditional Arabic", "Scheherazade New", "Amiri", "Times New Roman", serif; font-size: 1.45rem; line-height: 2.2; background: var(--bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px 16px; margin: 10px 0; }
   .hadith-src { color: var(--muted); font-size: 0.85rem; }
+  .label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin: 12px 0 2px; }
+  .label:first-of-type { margin-top: 0; }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
   .results { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
   .result-row { margin-bottom: 12px; }
   .result-label { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 4px; }
@@ -80,6 +84,8 @@
   .thanks { text-align: center; padding: 30px 0; }
   .thanks .big { font-size: 1.6rem; color: var(--accent); font-weight: 700; }
   .notification { background: var(--accent); color: var(--on-accent); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; display: none; font-size: 0.95rem; text-align: center; }
+  .notice { background: var(--bg); border: 1px solid var(--border); border-left: 4px solid var(--warn, #b5893a); border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; color: var(--muted); margin-top: 12px; }
+  .notice.hidden { display: none; }
 
   .history-box { max-height: 220px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 10px; }
   .history-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 0.85rem; }
@@ -101,7 +107,15 @@
 
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 <div class="sidebar" id="sidebar">
-  <button class="close-sidebar" onclick="closeSidebar()">&times;</button>
+  <button class="close-sidebar" onclick="closeSidebar()" aria-label="Menüyü kapat">&times;</button>
+  <button class="sidebar-nav-btn" onclick="openDailyQuestion()">
+    <span>Günün Sorusu</span>
+    <span>➔</span>
+  </button>
+  <button class="sidebar-nav-btn" onclick="goHomeView()">
+    <span>Ana Sayfa</span>
+    <span>➔</span>
+  </button>
   <button class="sidebar-nav-btn" onclick="goToAboutPage()">
     <span>Biz Kimiz?</span>
     <span>➔</span>
@@ -109,15 +123,16 @@
 </div>
 
 <header>
-  <button class="menu-btn" onclick="openSidebar()" title="Menü">☰</button>
+  <button class="menu-btn" onclick="openSidebar()" title="Menü" aria-label="Menü">☰</button>
   <button class="theme-btn" id="themeBtn">🌙 Karanlık</button>
 </header>
 
 <main>
-  <section class="view active" id="view-question">
+  <section class="view" id="view-question">
     <div class="card" style="max-width: 600px; margin: 0 auto;">
       <p class="muted" id="dayInfo">Yükleniyor...</p>
       <p class="question" id="questionText">Soru Yükleniyor...</p>
+      <div class="notice hidden" id="questionNotice"></div>
       <div class="options" id="options"></div>
       <textarea id="reasonBox" placeholder="Sebebini yazmak istersen buraya yazabilirsin (isteğe bağlı)"></textarea>
       <button class="btn" id="submitBtn" disabled>Cevabı Gönder</button>
@@ -126,13 +141,15 @@
 
   <section class="view" id="view-hadith">
     <div class="card" style="max-width: 600px; margin: 0 auto;">
-      <h2>Soruyla İlgili Ayet / Hadis</h2>
+      <h2 id="refTitle">Soruyla İlgili Ayet / Hadis</h2>
       <p class="hadith" id="hadithText"></p>
+      <p class="hadith-ar" id="hadithArabic" dir="rtl" lang="ar" style="display:none;"></p>
       <p class="hadith-src" id="hadithSrc"></p>
       <div class="results">
         <h2>Katılımcıların Cevapları</h2>
         <div id="resultsBox"><p class="muted">Sonuçlar yükleniyor...</p></div>
       </div>
+      <button class="small-btn" style="margin-top:16px;" onclick="goHomeView()">Ana Sayfaya Dön</button>
     </div>
   </section>
 
@@ -156,24 +173,24 @@
         <p>Dijital teknolojileri ve değerler eğitimini harmanlayarak bireylerin günlük ahlaki kararlarını tefekkür etmelerini sağlamak ve toplumsal empati eğilimlerini anonim verilerle analiz etmektir.</p>
       </div>
       <div class="about-section">
-        <h3>Ulaşım & İletişim</h3>
+        <h3>Ulaşım &amp; İletişim</h3>
         <p>📧 <strong>Gmail:</strong><br>
           <a href="mailto:tubitakdinisiteprojesi@gmail.com" class="about-link">tubitakdinisiteprojesi@gmail.com</a>
         </p>
       </div>
-      <button class="btn" style="margin-top: 20px;" onclick="goHome()">Ana Sayfaya Dön</button>
+      <button class="btn" style="margin-top: 20px;" onclick="goHomeView()">Ana Sayfaya Dön</button>
     </div>
   </section>
 
-  <section class="view" id="view-home">
-    <div id="notification" class="notification"></div>
+  <section class="view active" id="view-home">
+    <div id="notification" class="notification" role="status" aria-live="polite"></div>
     <div class="home-grid">
       <div class="col col-left">
         <div class="card">
           <div>
             <h2>Ezan Vakitleri</h2>
             <div class="location-bar">
-              <input id="cityInput" placeholder="Şehir (örn: Istanbul)" value="Istanbul">
+              <input id="cityInput" type="text" placeholder="Şehir (örn: Istanbul)" value="Istanbul">
               <button class="small-btn" id="cityBtn">Güncelle</button>
             </div>
             <div class="prayer-times" id="prayerTimes"></div>
@@ -187,17 +204,23 @@
       </div>
 
       <div class="col col-right">
+        <div class="card card-verse">
+          <h2>Günün Ayeti ve Hadisi</h2>
+          <p class="label">Günün Ayeti</p>
+          <p class="hadith" id="verseText"></p>
+          <p class="hadith-ar" id="verseArabic" dir="rtl" lang="ar"></p>
+          <p class="hadith-src" id="verseSrc"></p>
+          <div class="divider"></div>
+          <p class="label">Günün Hadisi</p>
+          <p class="hadith" id="dayHadithText"></p>
+          <p class="hadith-src" id="dayHadithSrc"></p>
+        </div>
+
         <div class="card card-history">
           <h2>Cevaplanan Sorular</h2>
           <div class="history-box" id="historyBox">
             <p class="muted">Henüz cevaplanmış bir soru bulunmuyor.</p>
           </div>
-        </div>
-
-        <div class="card card-verse">
-          <h2 id="verseTitle">Günün Ayeti ve Hadisi</h2>
-          <p class="hadith" style="font-size:0.9rem; margin:6px 0;" id="verseText"></p>
-          <p class="hadith-src" id="verseSrc"></p>
         </div>
       </div>
     </div>
@@ -214,11 +237,10 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzv1nkAacPrQWz_x6i1ufuQOCv8vKDTqjDMwE8cQ3Xckl1vDTJIvkhnFvBl7LOYRWGlpA/exec";
 
-let clientId = localStorage.getItem("project_client_id");
-if (!clientId) {
-  clientId = "user_" + Math.random().toString(36).substring(2, 15);
-  localStorage.setItem("project_client_id", clientId);
-}
+/* ============================================================
+   ORTAK VERİ BLOĞU — admin.html ile birebir aynı olmalı
+   (soru sırası / ayet sırası / hadis sırası index'lere bağlı)
+   ============================================================ */
 
 const QUESTIONS = [
   { text: "Yolda elinde ağır poşetlerle yürümekte zorlanan birini gördün. Ne yaparsın?", options: ["Hemen yanına gidip poşetleri taşımasına yardım ederim.", "Müsaitsem ve yolum üstündeyse yardım teklif ederim.", "Acil işim olduğundan veya çekindiğimden müdahale etmem."] },
@@ -253,6 +275,107 @@ const QUESTIONS = [
   { text: "Hayatta en çok hangi değere bağlı kalmaya özen gösteriyorsun?", options: ["Dürüstlük ve güvenilirlik her şeyden önce gelir.", "Adalet ve merhamet hayatımın merkezindedir.", "Sevgi, vefa ve sadakat en önemli değerlerimdir."] }
 ];
 
+/* Günün ayeti havuzu: arapça + meal. Sıra numarası = index + 1 */
+const VERSES = [
+  { source: "Nahl Suresi, 90. Ayet",
+    ar: "إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالْإِحْسَانِ وَإِيتَاءِ ذِي الْقُرْبَىٰ وَيَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ وَالْبَغْيِ يَعِظُكُمْ لَعَلَّكُمْ تَذَكَّرُونَ",
+    tr: "Şüphesiz Allah; adaleti, ihsanı ve akrabaya yardım etmeyi emreder; çirkin işleri, fenalığı ve zulmü yasaklar. Size öğüt veriyor, umulur ki ibret alırsınız." },
+  { source: "Fussilet Suresi, 34. Ayet",
+    ar: "ادْفَعْ بِالَّتِي هِيَ أَحْسَنُ فَإِذَا الَّذِي بَيْنَكَ وَبَيْنَهُ عَدَاوَةٌ كَأَنَّهُ وَلِيٌّ حَمِيمٌ",
+    tr: "Kötülüğü, en güzel şekilde sav. O zaman seninle arasında düşmanlık bulunan kimse, sanki sıcak bir dost oluverir." },
+  { source: "Zilzâl Suresi, 7-8. Ayetler",
+    ar: "فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُ وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ شَرًّا يَرَهُ",
+    tr: "Kim zerre kadar iyilik yapmışsa onu görür; kim de zerre kadar kötülük yapmışsa onu görür." },
+  { source: "Bakara Suresi, 153. Ayet",
+    ar: "يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
+    tr: "Ey iman edenler! Sabır ve namaz ile Allah'tan yardım isteyin. Şüphesiz Allah sabredenlerle beraberdir." },
+  { source: "Mâide Suresi, 2. Ayet",
+    ar: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ وَلَا تَعَاوَنُوا عَلَى الْإِثْمِ وَالْعُدْوَانِ",
+    tr: "İyilik ve takva üzerinde yardımlaşın; kötülük ve düşmanlık üzerinde yardımlaşmayın." },
+  { source: "Hucurât Suresi, 13. Ayet",
+    ar: "يَا أَيُّهَا النَّاسُ إِنَّا خَلَقْنَاكُم مِّن ذَكَرٍ وَأُنثَىٰ وَجَعَلْنَاكُمْ شُعُوبًا وَقَبَائِلَ لِتَعَارَفُوا إِنَّ أَكْرَمَكُمْ عِندَ اللَّهِ أَتْقَاكُمْ",
+    tr: "Ey insanlar! Sizi bir erkek ile bir dişiden yarattık; birbirinizi tanıyasınız diye sizi halklara ve kabilelere ayırdık. Allah katında en değerliniz, en takvalı olanınızdır." },
+  { source: "Âl-i İmrân Suresi, 134. Ayet",
+    ar: "الَّذِينَ يُنفِقُونَ فِي السَّرَّاءِ وَالضَّرَّاءِ وَالْكَاظِمِينَ الْغَيْظَ وَالْعَافِينَ عَنِ النَّاسِ وَاللَّهُ يُحِبُّ الْمُحْسِنِينَ",
+    tr: "Onlar bollukta da darlıkta da harcarlar, öfkelerini yutarlar ve insanları affederler. Allah güzel davrananları sever." },
+  { source: "Bakara Suresi, 83. Ayet",
+    ar: "وَقُولُوا لِلنَّاسِ حُسْنًا",
+    tr: "İnsanlara güzel söz söyleyin." },
+  { source: "İsrâ Suresi, 23. Ayet",
+    ar: "وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوا إِلَّا إِيَّاهُ وَبِالْوَالِدَيْنِ إِحْسَانًا",
+    tr: "Rabbin, kendisinden başkasına kulluk etmemeyi ve anne-babaya iyilikle davranmayı emretti." },
+  { source: "İsrâ Suresi, 24. Ayet",
+    ar: "رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+    tr: "Rabbim! Onlara, küçükken benim üzerine titredikleri gibi, merhamet et." },
+  { source: "Hucurât Suresi, 12. Ayet",
+    ar: "وَلَا يَغْتَب بَّعْضُكُم بَّعْضًا أَيُحِبُّ أَحَدُكُمْ أَن يَأْكُلَ لَحْمَ أَخِيهِ مَيْتًا فَكَرِهْتُمُوهُ",
+    tr: "Birbirinizin gıybetini yapmayın. Biriniz, ölmüş kardeşinin etini yemeyi ister mi? İşte bundan tiksindiniz." },
+  { source: "Hucurât Suresi, 10. Ayet",
+    ar: "إِنَّمَا الْمُؤْمِنُونَ إِخْوَةٌ فَأَصْلِحُوا بَيْنَ أَخَوَيْكُمْ",
+    tr: "Müminler ancak kardeştir; kardeşlerinizin arasını düzeltin." },
+  { source: "Hucurât Suresi, 6. Ayet",
+    ar: "يَا أَيُّهَا الَّذِينَ آمَنُوا إِن جَاءَكُمْ فَاسِقٌ بِنَبَإٍ فَتَبَيَّنُوا أَن تُصِيبُوا قَوْمًا بِجَهَالَةٍ فَتُصْبِحُوا عَلَىٰ مَا فَعَلْتُمْ نَادِمِينَ",
+    tr: "Ey iman edenler! Size bir fasık bir haber getirirse, onu iyice araştırın; bilmeden bir topluluğa zarar verip yaptığınıza pişman olmazsınız." },
+  { source: "Lokman Suresi, 18. Ayet",
+    ar: "وَلَا تُصَعِّرْ خَدَّكَ لِلنَّاسِ وَلَا تَمْشِ فِي الْأَرْضِ مَرَحًا إِنَّ اللَّهَ لَا يُحِبُّ كُلَّ مُخْتَالٍ فَخُورٍ",
+    tr: "İnsanlara küçümseyerek yan bakma, yeryüzünde çalımla yürüme; şüphesiz Allah, böbürlenip övünen kimseyi sevmez." },
+  { source: "Nûr Suresi, 22. Ayet",
+    ar: "وَلْيَعْفُوا وَلْيَصْفَحُوا أَلَا تُحِبُّونَ أَن يَغْفِرَ اللَّهُ لَكُمْ",
+    tr: "Affetsinler, görmezden gelsinler. Allah'ın sizi bağışlamasını sevmez misiniz?" },
+  { source: "Nisâ Suresi, 58. Ayet",
+    ar: "إِنَّ اللَّهَ يَأْمُرُكُمْ أَن تُؤَدُّوا الْأَمَانَاتِ إِلَىٰ أَهْلِهَا",
+    tr: "Şüphesiz Allah, emanetleri ehline vermenizi emreder." },
+  { source: "Bakara Suresi, 280. Ayet",
+    ar: "وَإِن كَانَ ذُو عُسْرَةٍ فَنَظِرَةٌ إِلَىٰ مَيْسَرَةٍ",
+    tr: "Eğer borçlu darlık içindeyse, ona kolaylığına kadar mühlet verin." },
+  { source: "Bakara Suresi, 195. Ayet",
+    ar: "وَأَنفِقُوا فِي سَبِيلِ اللَّهِ وَلَا تُلْقُوا بِأَيْدِيكُمْ إِلَى التَّهْلُكَةِ وَأَحْسِنُوا إِنَّ اللَّهَ يُحِبُّ الْمُحْسِنِينَ",
+    tr: "Allah yolunda harcayın; kendi elinizle kendinizi tehlikeye atmayın. İyilik edin; şüphesiz Allah iyilik edenleri sever." },
+  { source: "Mâûn Suresi, 1-3. Ayetler",
+    ar: "أَرَأَيْتَ الَّذِي يُكَذِّبُ بِالدِّينِ فَذَٰلِكَ الَّذِي يَدُعُّ الْيَتِيمَ وَلَا يَحُضُّ عَلَىٰ طَعَامِ الْمِسْكِينِ",
+    tr: "Dini yalanlayanı gördün mü? İşte o, yetimi itip kakar, yoksulu doyurmayı teşvik etmez." },
+  { source: "İnsân Suresi, 8-9. Ayetler",
+    ar: "يُطْعِمُونَ الطَّعَامَ عَلَىٰ حُبِّهِ مِسْكِينًا وَيَتِيمًا وَأَسِيرًا إِنَّمَا نُطْعِمُكُمْ لِوَجْهِ اللَّهِ لَا نُرِيدُ مِنكُمْ جَزَاءً وَلَا شُكُورًا",
+    tr: "Onlar, kendileri iştahla arzuladıkları halde yemeği yoksula, yetime ve esire yedirirler; 'Biz size ancak Allah rızası için yediriyoruz, sizden ne bir karşılık ne de bir teşekkür isteriz' derler." },
+  { source: "Âl-i İmrân Suresi, 92. Ayet",
+    ar: "لَن تَنَالُوا الْبِرَّ حَتَّىٰ تُنفِقُوا مِمَّا تُحِبُّونَ",
+    tr: "Sevdiğiniz şeylerden infak etmedikçe iyiliğin (birr) gerçeklerine ulaşamazsınız." },
+  { source: "Bakara Suresi, 263. Ayet",
+    ar: "قَوْلٌ مَّعْرُوفٌ وَمَغْفِرَةٌ خَيْرٌ مِّن صَدَقَةٍ يَتْبَعُهَا أَذًى",
+    tr: "Güzel bir söz ve bağışlama, ardına eziyet karıştırılmış bir sadakadan daha hayırlıdır." },
+  { source: "Haşr Suresi, 9. Ayet",
+    ar: "وَمَن يُوقَ شُحَّ نَفْسِهِ فَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ",
+    tr: "Kim de nefsini açgözlülükten korursa, işte kurtuluşa erenler onlardır." },
+  { source: "Bakara Suresi, 177. Ayet",
+    ar: "وَلَٰكِنَّ الْبِرَّ مَنْ آمَنَ بِاللَّهِ وَالْيَوْمِ الْآخِرِ وَالْمَلَائِكَةِ وَالْكِتَابِ وَالنَّبِيِّينَ وَآتَى الْمَالَ عَلَىٰ حُبِّهِ ذَوِي الْقُرْبَىٰ وَالْيَتَامَىٰ وَالْمَسَاكِينَ",
+    tr: "Asıl iyilik; Allah'a, ahiret gününe, meleklere, kitaba ve peygamberlere iman eden, malı sevdiği halde yakınlara, yetimlere, yoksullara veren kimsenin iyiliğidir." },
+  { source: "Nisâ Suresi, 36. Ayet",
+    ar: "وَاعْبُدُوا اللَّهَ وَلَا تُشْرِكُوا بِهِ شَيْئًا وَبِالْوَالِدَيْنِ إِحْسَانًا وَبِذِي الْقُرْبَىٰ وَالْيَتَامَىٰ وَالْمَسَاكِينِ وَالْجَارِ ذِي الْقُرْبَىٰ وَالْجَارِ الْجُنُبِ",
+    tr: "Allah'a kulluk edin, O'na hiçbir şey ortak koşmayın. Anne-babaya, yakınlarına, yetimlere, yoksullara, yakın ve uzak komşuya iyilikle davranın." },
+  { source: "Enfâl Suresi, 46. Ayet",
+    ar: "وَأَطِيعُوا اللَّهَ وَرَسُولَهُ وَلَا تَنَازَعُوا فَتَفْشَلُوا وَتَذْهَبَ رِيحُكُمْ",
+    tr: "Allah'a ve Elçisine itaat edin, birbirinizle çekişmeyin; yoksa başarısız olursunuz ve gücünüz gider." },
+  { source: "Bakara Suresi, 267. Ayet",
+    ar: "يَا أَيُّهَا الَّذِينَ آمَنُوا أَنفِقُوا مِن طَيِّبَاتِ مَا كَسَبْتُمْ",
+    tr: "Ey iman edenler! Kazandıklarınızın en iyilerinden harcayın." },
+  { source: "Zümer Suresi, 53. Ayet",
+    ar: "قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ",
+    tr: "De ki: Ey nefislerine yazık eden kullarım! Allah'ın rahmetinden ümidinizi kesmeyin." },
+  { source: "Lokman Suresi, 19. Ayet",
+    ar: "وَاقْصِدْ فِي مَشْيِكَ وَاغْضُضْ مِن صَوْتِكَ",
+    tr: "Yürüyüşünde mütevazı ol, sesinden (bağırıp çağırmaktan) kıs." },
+  { source: "Nisâ Suresi, 86. Ayet",
+    ar: "وَإِذَا حُيِّيتُم بِتَحِيَّةٍ فَحَيُّوا بِأَحْسَنَ مِنْهَا أَوْ رُدُّوهَا",
+    tr: "Size bir selam verildiğinde, siz de ondan daha güzeliyle karşılık verin veya aynısıyla iade edin." },
+  { source: "Bakara Suresi, 188. Ayet",
+    ar: "وَلَا تَأْكُلُوا أَمْوَالَكُم بَيْنَكُم بِالْبَاطِلِ",
+    tr: "Malınızı aranızda haksız yollarla yemeyin." },
+  { source: "Kasas Suresi, 77. Ayet",
+    ar: "وَابْتَغِ فِيمَا آتَاكَ اللَّهُ الدَّارَ الْآخِرَةَ وَلَا تَنسَ نَصِيبَكَ مِنَ الدُّنْيَا وَأَحْسِن كَمَا أَحْسَنَ اللَّهُ إِلَيْكَ",
+    tr: "Allah'ın sana verdikleriyle ahiret yurdunu ara; dünyadaki payını da unutma. Allah sana nasıl iyilik ettiyse, sen de öyle iyilik et." }
+];
+
+/* Günün hadisi havuzu */
 const HADITHS = [
   { text: "Kişi, kardeşinin ihtiyacını gidermekle meşgul olduğu sürece Allah da onun ihtiyacını giderir.", source: "Buhârî, Mezâlim 4" },
   { text: "Müslüman, elinden ve dilinden insanların emin olduğu kimsedir.", source: "Buhârî, İman 4" },
@@ -286,25 +409,150 @@ const HADITHS = [
   { text: "Gerçek pehlivan, öfkelendiğinde kendini tutabilendir.", source: "Buhârî, Edeb 76" }
 ];
 
-function getGlobalDayIndex() {
-  const d = new Date();
-  const utcDays = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
-  return utcDays % 30;
-}
+/* Soruya özel ayet / hadis: index sırası QUESTIONS ile birebir aynı olmalı.
+   'ar' alanı varsa ayet, yoksa hadis olarak gösterilir. */
+const QUESTION_REFS = [
+  { source: "Mâide Suresi, 2. Ayet",
+    ar: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ وَلَا تَعَاوَنُوا عَلَى الْإِثْمِ وَالْعُدْوَانِ",
+    tr: "İyilik ve takva üzerinde yardımlaşın; kötülük ve düşmanlık üzerinde yardımlaşmayın." },
+  { source: "Müslim, İman 45", tr: "Bizi aldatan, bizden değildir." },
+  { source: "Tirmizî, Birr 15", tr: "Küçüklerimize merhamet etmeyen, büyüklerimize saygı göstermeyen bizden değildir." },
+  { source: "Müslim, Birr 85", tr: "Kim bir müminin ayıbını örterse, Allah da kıyamet gününde onun ayıbını örter." },
+  { source: "Buhârî, Edeb 29; Müslim, İman 49", tr: "Kim Allah'a ve ahiret gününe inanıyorsa, komşusuna eziyet etmesin." },
+  { source: "Âl-i İmrân Suresi, 134. Ayet",
+    ar: "الَّذِينَ يُنفِقُونَ فِي السَّرَّاءِ وَالضَّرَّاءِ وَالْكَاظِمِينَ الْغَيْظَ وَالْعَافِينَ عَنِ النَّاسِ وَاللَّهُ يُحِبُّ الْمُحْسِنِينَ",
+    tr: "Onlar bollukta da darlıkta da harcarlar, öfkelerini yutarlar ve insanları affederler. Allah güzel davrananları sever." },
+  { source: "Tirmizî, Savm 82", tr: "Bir oruçluyu iftar ettiren kimse, oruçlunun kazandığı sevabın bir benzerini kazanır; oruçlunun sevabından da hiçbir şey eksilmez." },
+  { source: "Hucurât Suresi, 12. Ayet",
+    ar: "وَلَا يَغْتَب بَّعْضُكُم بَّعْضًا أَيُحِبُّ أَحَدُكُمْ أَن يَأْكُلَ لَحْمَ أَخِيهِ مَيْتًا فَكَرِهْتُمُوهُ",
+    tr: "Birbirinizin gıybetini yapmayın. Biriniz, ölmüş kardeşinin etini yemeyi ister mi? İşte bundan tiksindiniz." },
+  { source: "Bakara Suresi, 83. Ayet",
+    ar: "وَقُولُوا لِلنَّاسِ حُسْنًا",
+    tr: "İnsanlara güzel söz söyleyin." },
+  { source: "Nisâ Suresi, 58. Ayet",
+    ar: "إِنَّ اللَّهَ يَأْمُرُكُمْ أَن تُؤَدُّوا الْأَمَانَاتِ إِلَىٰ أَهْلِهَا",
+    tr: "Şüphesiz Allah, emanetleri ehline vermenizi emreder." },
+  { source: "Buhârî, İstiska 8; Müslim, İmâre 20", tr: "Hepiniz çobansınız ve hepiniz gütmekle sorumlu olduğunuz kimseden mesuldürsünüz." },
+  { source: "Bakara Suresi, 188. Ayet",
+    ar: "وَلَا تَأْكُلُوا أَمْوَالَكُم بَيْنَكُم بِالْبَاطِلِ",
+    tr: "Malınızı aranızda haksız yollarla yemeyin." },
+  { source: "Tirmizî, Kıyamet 23", tr: "Nerede olursan ol Allah'a karşı gelmekten sakın; kötülüğün ardından iyilik yap, onu siler. İnsanlara güzel ahlakla davran." },
+  { source: "İnsân Suresi, 9. Ayet",
+    ar: "إِنَّمَا نُطْعِمُكُمْ لِوَجْهِ اللَّهِ لَا نُرِيدُ مِنكُمْ جَزَاءً وَلَا شُكُورًا",
+    tr: "Biz size ancak Allah rızası için yediriyoruz; sizden ne bir karşılık ne de bir teşekkür isteriz." },
+  { source: "İsrâ Suresi, 23. Ayet",
+    ar: "وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوا إِلَّا إِيَّاهُ وَبِالْوَالِدَيْنِ إِحْسَانًا",
+    tr: "Rabbin, kendisinden başkasına kulluk etmemeyi ve anne-babaya iyilikle davranmayı emretti." },
+  { source: "Hucurât Suresi, 10. Ayet",
+    ar: "إِنَّمَا الْمُؤْمِنُونَ إِخْوَةٌ فَأَصْلِحُوا بَيْنَ أَخَوَيْكُمْ",
+    tr: "Müminler ancak kardeştir; kardeşlerinizin arasını düzeltin." },
+  { source: "Tirmizî, Kıyamet 16; Ebû Dâvûd, Edeb 59", tr: "Merhametli olanlara Rahman olan Allah merhamet eder. Yeryüzündekilere merhamet edin ki göktekiler de size merhamet etsin." },
+  { source: "Hucurât Suresi, 6. Ayet",
+    ar: "يَا أَيُّهَا الَّذِينَ آمَنُوا إِن جَاءَكُمْ فَاسِقٌ بِنَبَإٍ فَتَبَيَّنُوا",
+    tr: "Ey iman edenler! Size bir fasık bir haber getirirse, onu iyice araştırın; bilmeden bir topluluğa zarar verip pişman olmazsınız." },
+  { source: "Lokman Suresi, 18. Ayet",
+    ar: "وَلَا تُصَعِّرْ خَدَّكَ لِلنَّاسِ وَلَا تَمْشِ فِي الْأَرْضِ مَرَحًا إِنَّ اللَّهَ لَا يُحِبُّ كُلَّ مُخْتَالٍ فَخُورٍ",
+    tr: "İnsanlara küçümseyerek yan bakma, yeryüzünde çalımla yürüme; şüphesiz Allah, böbürlenip övünen kimseyi sevmez." },
+  { source: "Müslim, Birr 57; Tirmizî, Kıyâmet 13", tr: "Dürüstlük iyiliğe, iyilik de cennete götürür. Kişi doğru söyleye söyleye Allah katında sıddîk (doğru sözlü) olarak yazılır." },
+  { source: "Bakara Suresi, 280. Ayet",
+    ar: "وَإِن كَانَ ذُو عُسْرَةٍ فَنَظِرَةٌ إِلَىٰ مَيْسَرَةٍ",
+    tr: "Eğer borçlu darlık içindeyse, ona kolaylığına kadar mühlet verin." },
+  { source: "Bakara Suresi, 195. Ayet",
+    ar: "وَلَا تُلْقُوا بِأَيْدِيكُمْ إِلَى التَّهْلُكَةِ وَأَحْسِنُوا إِنَّ اللَّهَ يُحِبُّ الْمُحْسِنِينَ",
+    tr: "Kendi elinizle kendinizi tehlikeye atmayın; iyilik edin, şüphesiz Allah iyilik edenleri sever." },
+  { source: "Müslim, İman 45", tr: "Kim bize ait olan bir şeyde hile yaparsa, o kimse bizden değildir." },
+  { source: "Âl-i İmrân Suresi, 92. Ayet",
+    ar: "لَن تَنَالُوا الْبِرَّ حَتَّىٰ تُنفِقُوا مِمَّا تُحِبُّونَ",
+    tr: "Sevdiğiniz şeylerden infak etmedikçe iyiliğin gerçeklerine ulaşamazsınız." },
+  { source: "Tirmizî, Zühd 13; İbn Mâce, Fiten 12", tr: "Kişinin kendisini ilgilendirmeyen şeyleri terk etmesi, İslam'ının güzelliğindendir." },
+  { source: "Dârakutnî, Sünen 3/67", tr: "İnsanların en hayırlısı, insanlara en faydalı olandır." },
+  { source: "Nûr Suresi, 22. Ayet",
+    ar: "وَلْيَعْفُوا وَلْيَصْفَحُوا أَلَا تُحِبُّونَ أَن يَغْفِرَ اللَّهُ لَكُمْ",
+    tr: "Affetsinler, görmezden gelsinler. Allah'ın sizi bağışlamasını sevmez misiniz?" },
+  { source: "Mâûn Suresi, 2-3. Ayetler",
+    ar: "فَذَٰلِكَ الَّذِي يَدُعُّ الْيَتِيمَ وَلَا يَحُضُّ عَلَىٰ طَعَامِ الْمِسْكِينِ",
+    tr: "İşte o, yetimi itip kakar ve yoksulu doyurmayı teşvik etmez." },
+  { source: "Tirmizî, Birr 36", tr: "Kardeşinin yüzüne tebessüm etmen sadakadır." },
+  { source: "Buhârî, Menâkıb 23", tr: "Sizin en hayırlınız, ahlakı en güzel olanınızdır." }
+];
 
-function todayKey() {
-  const d = new Date();
-  return d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
-}
-
-let dayIndex = getGlobalDayIndex();
-let currentQ = QUESTIONS[dayIndex];
-let currentH = HADITHS[dayIndex];
 const LETTERS = ["A", "B", "C"];
+
+/* ---------------- yardımcı fonksiyonlar ---------------- */
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function todayKey(d) {
+  const x = d || new Date();
+  return x.getFullYear() + String(x.getMonth() + 1).padStart(2, "0") + String(x.getDate()).padStart(2, "0");
+}
+
+/* Yerel tarihe göre geçen tam gün sayısı; gece 00:00'da kendiliğinden artar. */
+function localDayCount(d) {
+  const x = d || new Date();
+  return Math.floor(Date.UTC(x.getFullYear(), x.getMonth(), x.getDate()) / 86400000);
+}
+
+function mod(n, m) { return ((n % m) + m) % m; }
+
+function moduloList(arr, n) { return arr[mod(n, arr.length)]; }
+
+/* "3|20261021" -> 20261021 bugünse 3; "auto"/boş/eski format -> null */
+function readPinnedIndex(raw) {
+  if (raw === undefined || raw === null) return null;
+  const s = String(raw).trim();
+  if (!s || s === "auto") return null;
+  const parts = s.split("|");
+  if (parts.length !== 2) return null;
+  const idx = parseInt(parts[0], 10);
+  if (isNaN(idx)) return null;
+  if (parts[1] !== todayKey()) return null;
+  return idx;
+}
+
+/* ---------------- günlük içerik hesabı ---------------- */
+
+let settings = {};
+let daily = { questionIdx: 0, verseIdx: 0, hadithIdx: 0, pinned: { q: false, a: false, h: false } };
+
+function computeDailyState() {
+  const n = localDayCount();
+  const pq = readPinnedIndex(settings.aktif_soru);
+  const pa = readPinnedIndex(settings.aktif_ayet);
+  const ph = readPinnedIndex(settings.aktif_hadis);
+
+  const qIdx = pq !== null && pq >= 0 && pq < QUESTIONS.length ? pq : mod(n, QUESTIONS.length);
+  let aIdx = pa !== null && pa >= 0 && pa < VERSES.length ? pa : mod(n, VERSES.length);
+  let hIdx = ph !== null && ph >= 0 && ph < HADITHS.length ? ph : mod(n + 7, HADITHS.length);
+
+  daily = {
+    questionIdx: qIdx,
+    verseIdx: aIdx,
+    hadithIdx: hIdx,
+    pinned: { q: pq !== null, a: pa !== null, h: ph !== null }
+  };
+}
+
+function currentQuestion() { return QUESTIONS[daily.questionIdx]; }
+function currentVerse() { return VERSES[daily.verseIdx]; }
+function currentDayHadith() { return HADITHS[daily.hadithIdx]; }
+function currentQuestionRef() { return QUESTION_REFS[daily.questionIdx]; }
+
+/* ---------------- görünümler / menü ---------------- */
+
+function activeViewId() {
+  const v = document.querySelector(".view.active");
+  return v ? v.id : "";
+}
 
 function show(id) {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  const el = document.getElementById(id);
+  if (el) el.classList.add("active");
 }
 
 function openSidebar() {
@@ -322,8 +570,29 @@ function goToAboutPage() {
   show("view-about");
 }
 
+function goHomeView() {
+  closeSidebar();
+  show("view-home");
+  renderVerseCard();
+  renderHistory();
+  renderPublicFeed();
+}
+
+function openDailyQuestion() {
+  closeSidebar();
+  renderQuestion();
+  show("view-question");
+}
+
+/* ---------------- yerel kayıt ---------------- */
+
 function getAnswersHistory() {
-  return JSON.parse(localStorage.getItem("answers_history") || "{}");
+  try {
+    const raw = JSON.parse(localStorage.getItem("answers_history") || "{}");
+    return raw && typeof raw === "object" ? raw : {};
+  } catch (e) {
+    return {};
+  }
 }
 
 function saveAnswerToHistory(qIdx, optIndex, reason) {
@@ -332,6 +601,13 @@ function saveAnswerToHistory(qIdx, optIndex, reason) {
   localStorage.setItem("answers_history", JSON.stringify(history));
 }
 
+function answeredToday() {
+  const item = getAnswersHistory()[daily.questionIdx];
+  return !!(item && item.date === todayKey());
+}
+
+/* ---------------- tema ---------------- */
+
 const themeBtn = document.getElementById("themeBtn");
 function applyTheme(t) {
   document.documentElement.setAttribute("data-theme", t);
@@ -339,148 +615,265 @@ function applyTheme(t) {
   localStorage.setItem("theme", t);
 }
 themeBtn.onclick = () => {
-  const cur = document.documentElement.getAttribute("data-theme");
-  applyTheme(cur === "dark" ? "light" : "dark");
+  applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
 };
 applyTheme(localStorage.getItem("theme") || "light");
 
-let selectedIndex = null;
+/* ---------------- backend ---------------- */
 
-function renderQuestion() {
-  selectedIndex = null;
-  document.getElementById("dayInfo").textContent = "Soru #" + (dayIndex + 1) + " (" + new Date().toLocaleDateString('tr-TR') + ")";
-  document.getElementById("questionText").textContent = currentQ.text;
-  document.getElementById("reasonBox").value = "";
-  document.getElementById("submitBtn").disabled = true;
-
-  const box = document.getElementById("options");
-  box.innerHTML = "";
-  currentQ.options.forEach((opt, i) => {
-    const b = document.createElement("button");
-    b.className = "option";
-    b.textContent = LETTERS[i] + ") " + opt;
-    b.onclick = () => {
-      selectedIndex = i;
-      document.querySelectorAll(".option").forEach(x => x.classList.remove("selected"));
-      b.classList.add("selected");
-      document.getElementById("submitBtn").disabled = false;
-    };
-    box.appendChild(b);
-  });
+async function callApi(params) {
+  const query = new URLSearchParams(params).toString();
+  const res = await fetch(`${SCRIPT_URL}?${query}`);
+  if (!res.ok) throw new Error("Sunucu yanıtı: " + res.status);
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error("Yanıt çözümlenemedi.");
+  }
 }
 
-document.getElementById("submitBtn").onclick = async () => {
-  if (selectedIndex === null) return;
-  const reason = document.getElementById("reasonBox").value.trim();
-  document.getElementById("submitBtn").disabled = true;
-
-  const history = getAnswersHistory();
-  const alreadyAnswered = !!history[dayIndex];
-
-  saveAnswerToHistory(dayIndex, selectedIndex, reason);
-
-  document.getElementById("hadithText").textContent = "“" + currentH.text + "”";
-  document.getElementById("hadithSrc").textContent = currentH.source;
-  show("view-hadith");
-
-  const counts = await sendVote(todayKey(), dayIndex, selectedIndex, reason);
-  renderResults(counts);
-
-  setTimeout(() => {
-    show("view-thanks");
-    setTimeout(() => {
-      goHome(alreadyAnswered ? "Cevabınız güncellendi!" : "Yanıtınız başarıyla kaydedildi.");
-    }, 2000);
-  }, 4000);
-};
+async function loadSettings() {
+  try {
+    const data = await callApi({ action: "getSettings" });
+    settings = data && typeof data === "object" ? data : {};
+  } catch (e) {
+    settings = {};
+  }
+}
 
 async function sendVote(dayStr, qIdx, opt, reason) {
-  if (!SCRIPT_URL || SCRIPT_URL.includes("BURAYA")) return null;
   try {
-    const url = `${SCRIPT_URL}?action=vote&day=${dayStr}&soru=${qIdx}&opt=${opt}&reason=${encodeURIComponent(reason)}&client=${clientId}`;
-    const res = await fetch(url);
-    return await res.json();
+    return await callApi({ action: "vote", day: dayStr, soru: qIdx, opt: opt, reason: reason, client: clientId });
   } catch (e) {
     return null;
   }
 }
 
-function renderResults(counts) {
+/* ---------------- soru ekranı ---------------- */
+
+let clientId = localStorage.getItem("project_client_id");
+if (!clientId) {
+  clientId = "user_" + Math.random().toString(36).substring(2, 15);
+  localStorage.setItem("project_client_id", clientId);
+}
+
+let selectedIndex = null;
+let redirectTimers = [];
+
+function clearRedirectTimers() {
+  redirectTimers.forEach(clearTimeout);
+  redirectTimers = [];
+}
+
+function setQuestionNotice(msg) {
+  const n = document.getElementById("questionNotice");
+  if (msg) {
+    n.textContent = msg;
+    n.classList.remove("hidden");
+  } else {
+    n.textContent = "";
+    n.classList.add("hidden");
+  }
+}
+
+function renderQuestion() {
+  clearRedirectTimers();
+  selectedIndex = null;
+  const q = currentQuestion();
+
+  document.getElementById("dayInfo").textContent =
+    "Günün Sorusu #" + (daily.questionIdx + 1) + " • " + new Date().toLocaleDateString("tr-TR", { day: "2-digit", month: "long", year: "numeric" });
+  document.getElementById("questionText").textContent = q.text;
+  document.getElementById("reasonBox").value = "";
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("submitBtn").textContent = "Cevabı Gönder";
+
+  const answered = answeredToday();
+  const mine = getAnswersHistory()[daily.questionIdx];
+  setQuestionNotice(
+    siteClosed() ? "Soru cevaplaması şu an geçici olarak kapalı. Ana sayfayı ve günün ayetini yine kullanabilirsin."
+      : answered ? "Bu soruyu bugün zaten cevapladın. Dilersen cevabını güncelleyebilirsin."
+      : null
+  );
+
+  const box = document.getElementById("options");
+  box.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "option";
+    b.textContent = LETTERS[i] + ") " + opt;
+    b.onclick = () => selectOption(i);
+    if (answered && mine && mine.opt === i) {
+      b.classList.add("selected");
+      selectedIndex = i;
+    }
+    box.appendChild(b);
+  });
+
+  if (answered && mine && typeof mine.reason === "string") document.getElementById("reasonBox").value = mine.reason;
+  if (answered) {
+    document.getElementById("submitBtn").disabled = siteClosed();
+    document.getElementById("submitBtn").textContent = "Cevabı Güncelle";
+  }
+  if (siteClosed()) document.getElementById("submitBtn").disabled = true;
+}
+
+function selectOption(i) {
+  selectedIndex = i;
+  document.querySelectorAll("#options .option").forEach((x, idx) => x.classList.toggle("selected", idx === i));
+  document.getElementById("submitBtn").disabled = siteClosed();
+}
+
+function siteClosed() {
+  return settings && settings.durum === "kapali";
+}
+
+document.getElementById("submitBtn").onclick = async () => {
+  if (selectedIndex === null || siteClosed()) return;
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "Gönderiliyor...";
+
+  const reason = document.getElementById("reasonBox").value.trim();
+  const wasAnswered = answeredToday();
+  const q = currentQuestion();
+
+  saveAnswerToHistory(daily.questionIdx, selectedIndex, reason);
+
+  /* Soruya özel ayet / hadis (günün ayetinden bağımsız) */
+  const ref = currentQuestionRef();
+  const isVerse = !!ref.ar;
+  document.getElementById("refTitle").textContent = "Soruyla İlgili " + (isVerse ? "Ayet" : "Hadis");
+  document.getElementById("hadithText").textContent = "“" + ref.tr + "”";
+  const arEl = document.getElementById("hadithArabic");
+  if (isVerse) {
+    arEl.textContent = ref.ar;
+    arEl.style.display = "block";
+  } else {
+    arEl.textContent = "";
+    arEl.style.display = "none";
+  }
+  document.getElementById("hadithSrc").textContent = ref.source;
+  show("view-hadith");
+
+  const counts = await sendVote(todayKey(), daily.questionIdx, selectedIndex, reason);
+  renderResults(counts, q);
+
+  btn.textContent = wasAnswered ? "Cevabı Güncelle" : "Cevabı Gönder";
+
+  clearRedirectTimers();
+  redirectTimers.push(setTimeout(() => {
+    show("view-thanks");
+    redirectTimers.push(setTimeout(() => {
+      goHomeView();
+      showNotification(wasAnswered ? "Cevabın güncellendi!" : "Yanıtın başarıyla kaydedildi.");
+    }, 2000));
+  }, 4000));
+};
+
+function renderResults(counts, q) {
   const box = document.getElementById("resultsBox");
-  if (!counts) {
-    box.innerHTML = "<p class='muted'>Sonuçlar şu an alınamadı.</p>";
+  if (!counts || typeof counts !== "object") {
+    box.innerHTML = "<p class='muted'>Sonuçlar şu an alınamadı; yanıtın yine de kaydedildi.</p>";
     return;
   }
-  const total = currentQ.options.reduce((sum, _, i) => sum + (counts[i] || 0), 0);
+  const total = q.options.reduce((sum, _, i) => sum + (Number(counts[i]) || 0), 0);
+  if (!total) {
+    box.innerHTML = "<p class='muted'>Bu soru için henüz sonuç yok. İlk yanıt sen olabilirsin.</p>";
+    return;
+  }
   box.innerHTML = "";
-  currentQ.options.forEach((opt, i) => {
-    const c = counts[i] || 0;
-    const pct = total ? Math.round((c / total) * 100) : 0;
+  q.options.forEach((opt, i) => {
+    const c = Number(counts[i]) || 0;
+    const pct = Math.round((c / total) * 100);
     const row = document.createElement("div");
     row.className = "result-row";
     row.innerHTML = `
-      <div class="result-label"><span>${LETTERS[i]}) ${opt}</span><span>%${pct} (${c} Oy)</span></div>
+      <div class="result-label"><span>${LETTERS[i]}) ${escapeHtml(opt)}</span><span>%${pct} (${c} Oy)</span></div>
       <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>`;
     box.appendChild(row);
   });
 }
 
+/* ---------------- günün ayeti kartı ---------------- */
+
+function renderVerseCard() {
+  const v = currentVerse();
+  const h = currentDayHadith();
+  document.getElementById("verseText").textContent = "“" + v.tr + "”";
+  document.getElementById("verseArabic").textContent = v.ar;
+  document.getElementById("verseSrc").textContent = v.source + (daily.pinned.a ? " • elle seçildi" : "");
+  document.getElementById("dayHadithText").textContent = "“" + h.text + "”";
+  document.getElementById("dayHadithSrc").textContent = h.source + (daily.pinned.h ? " • elle seçildi" : "");
+}
+
+/* ---------------- geçmiş / paylaşımlar ---------------- */
+
 function renderHistory() {
   const box = document.getElementById("historyBox");
   const history = getAnswersHistory();
-  const keys = Object.keys(history).sort((a, b) => b - a);
+  const keys = Object.keys(history).map(Number).filter(n => !isNaN(n)).sort((a, b) => b - a);
 
   if (keys.length === 0) {
-    box.innerHTML = "<p class='muted'>Henüz cevaplanmış soru bulunmuyor.</p>";
+    box.innerHTML = "<p class='muted'>Henüz cevaplanmış bir soru bulunmuyor.</p>";
     return;
   }
 
   box.innerHTML = "";
-  keys.forEach(qIdxStr => {
-    const item = history[qIdxStr];
-    const q = QUESTIONS[item.qIndex] || QUESTIONS[0];
+  keys.forEach(qIdx => {
+    const item = history[qIdx];
+    const q = QUESTIONS[item.qIndex];
+    if (!q) return;
+
     const card = document.createElement("div");
     card.className = "history-card";
     card.innerHTML = `
-      <div style="font-weight:600; margin-bottom:2px;">Soru #${parseInt(item.qIndex)+1}: ${q.text}</div>
-      <div style="color:var(--accent); font-weight:600;">Cevabınız: ${LETTERS[item.opt]}) ${q.options[item.opt]}</div>
-      <div style="color:var(--muted); font-style:italic; margin-bottom:8px;">${item.reason ? '"' + item.reason + '"' : 'Açıklama yazılmadı.'}</div>
-      <button class="small-btn" onclick="toggleEdit('${item.qIndex}')">Düzenle</button>
-      <div id="edit-box-${item.qIndex}" style="display:none; margin-top:8px; flex-direction:column; gap:6px;">
+      <div style="font-weight:600; margin-bottom:2px;">Soru #${item.qIndex + 1}: ${escapeHtml(q.text)}</div>
+      <div style="color:var(--accent); font-weight:600;">Cevabınız: ${LETTERS[item.opt]}) ${escapeHtml(q.options[item.opt] || "")}</div>
+      <div style="color:var(--muted); font-style:italic; margin-bottom:8px;">${item.reason ? '"' + escapeHtml(item.reason) + '"' : "Açıklama yazılmadı."}</div>
+      <button type="button" class="small-btn" data-edit="${item.qIndex}">Düzenle</button>
+      <div class="edit-box" id="edit-box-${item.qIndex}" style="display:none; margin-top:8px; flex-direction:column; gap:6px;">
         <select id="edit-sel-${item.qIndex}" style="padding:6px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit;">
-          ${q.options.map((optText, oIdx) => `<option value="${oIdx}" ${oIdx === item.opt ? 'selected' : ''}>${LETTERS[oIdx]}) ${optText}</option>`).join('')}
+          ${q.options.map((optText, oIdx) => `<option value="${oIdx}" ${oIdx === item.opt ? "selected" : ""}>${LETTERS[oIdx]}) ${escapeHtml(optText)}</option>`).join("")}
         </select>
-        <textarea id="edit-txt-${item.qIndex}" style="min-height:50px; margin-top:0;" placeholder="Gerekçeni düzenle">${item.reason || ''}</textarea>
-        <button class="small-btn" style="background:var(--accent); color:var(--on-accent); border:none;" onclick="confirmEdit(${item.qIndex})">Değişikliği Kaydet</button>
-      </div>
-    `;
+        <textarea id="edit-txt-${item.qIndex}" style="min-height:50px; margin-top:0;" placeholder="Gerekçeni düzenle">${escapeHtml(item.reason || "")}</textarea>
+        <button type="button" class="small-btn" style="background:var(--accent); color:var(--on-accent); border:none;" data-confirm="${item.qIndex}">Değişikliği Kaydet</button>
+      </div>`;
     box.appendChild(card);
   });
 }
 
-function toggleEdit(qIdx) {
-  const el = document.getElementById(`edit-box-${qIdx}`);
-  el.style.display = el.style.display === 'none' ? 'flex' : 'none';
-}
+document.getElementById("historyBox").addEventListener("click", async (e) => {
+  const editBtn = e.target.closest("[data-edit]");
+  if (editBtn) {
+    const el = document.getElementById("edit-box-" + editBtn.dataset.edit);
+    if (el) el.style.display = el.style.display === "none" ? "flex" : "none";
+    return;
+  }
+  const okBtn = e.target.closest("[data-confirm]");
+  if (okBtn) await confirmEdit(Number(okBtn.dataset.confirm));
+});
 
 async function confirmEdit(qIdx) {
-  const optVal = parseInt(document.getElementById(`edit-sel-${qIdx}`).value);
-  const reasonVal = document.getElementById(`edit-txt-${qIdx}`).value.trim();
+  const optVal = parseInt(document.getElementById("edit-sel-" + qIdx).value, 10);
+  const reasonVal = document.getElementById("edit-txt-" + qIdx).value.trim();
+  if (isNaN(optVal)) return;
 
   saveAnswerToHistory(qIdx, optVal, reasonVal);
   renderHistory();
   showNotification("Cevabınız başarıyla güncellendi.");
-
   await sendVote(todayKey(), qIdx, optVal, reasonVal);
 }
 
 async function renderPublicFeed() {
   const box = document.getElementById("publicFeedBox");
   try {
-    const res = await fetch(`${SCRIPT_URL}?action=getAll`);
-    const json = res.ok ? await res.json() : {};
-    const rows = json.rows || [];
-    const published = rows.filter(r => r.durum === 'yayinda');
+    const json = await callApi({ action: "getAll" });
+    const rows = Array.isArray(json.rows) ? json.rows : [];
+    const published = rows.filter(r => r && r.durum === "yayinda");
 
     if (!published.length) {
       box.innerHTML = "<p class='muted'>Yayınlanan bir yanıt bulunmuyor.</p>";
@@ -488,22 +881,23 @@ async function renderPublicFeed() {
     }
 
     box.innerHTML = "";
-    published.forEach(item => {
-      const qObj = QUESTIONS[item.soru] || { text: "Soru", options: [] };
-      const ansText = qObj.options[item.cevap] ? `${LETTERS[item.cevap]}) ${qObj.options[item.cevap]}` : item.cevap;
+    published.slice(0, 50).forEach(item => {
+      const qObj = QUESTIONS[item.soru];
+      if (!qObj) return;
+      const ansText = qObj.options[item.cevap] ? `${LETTERS[item.cevap]}) ${qObj.options[item.cevap]}` : String(item.cevap || "");
 
       const div = document.createElement("div");
       div.className = "pub-item";
       div.innerHTML = `
-        <div class="pub-question-title">“${qObj.text}”</div>
-        <div><span class="pub-answer-badge">Verilen Cevap: ${ansText}</span></div>
+        <div class="pub-question-title">“${escapeHtml(qObj.text)}”</div>
+        <div><span class="pub-answer-badge">Verilen Cevap: ${escapeHtml(ansText)}</span></div>
         <div class="pub-reason-text">
-          <strong style="color:var(--accent);">Gerekçe:</strong> "${item.aciklama || 'Açıklama veya gerekçe belirtilmedi.'}"
+          <strong style="color:var(--accent);">Gerekçe:</strong> "${escapeHtml(item.aciklama || "Açıklama veya gerekçe belirtilmedi.")}"
         </div>`;
       box.appendChild(div);
     });
   } catch (e) {
-    box.innerHTML = "<p class='muted'>Paylaşımlar yüklenemedi.</p>";
+    box.innerHTML = "<p class='muted'>Paylaşımlar yüklenemedi. İnternet bağlantını kontrol edip Yenile yapabilirsin.</p>";
   }
 }
 
@@ -514,50 +908,55 @@ function showNotification(msg) {
   setTimeout(() => { n.style.display = "none"; }, 4000);
 }
 
-const PRAYER_NAMES = { Fajr: "İmsak", Sunrise: "Güneş", Dhuhr: "Öğle", Asr: "İkindi", Maghrib: "Akşam", Isha: "Yatsı" };
+/* ---------------- ezan vakitleri ---------------- */
+
+const PRAYER_NAMES = { Fajr: "İmsak", Dhuhr: "Öğle", Asr: "İkindi", Maghrib: "Akşam", Isha: "Yatsı" };
 const SHOW_KEYS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 let timesData = null;
 
-function goHome(notificationMessage) {
-  show("view-home");
-  loadPrayerTimes(document.getElementById("cityInput").value || "Istanbul");
-  renderHistory();
-  renderPublicFeed();
-  if (notificationMessage) showNotification(notificationMessage);
-}
-
 document.getElementById("cityBtn").onclick = () => {
-  loadPrayerTimes(document.getElementById("cityInput").value || "Istanbul");
+  const city = document.getElementById("cityInput").value.trim() || "Istanbul";
+  localStorage.setItem("prayer_city", city);
+  loadPrayerTimes(city);
 };
 
 async function loadPrayerTimes(city) {
+  const box = document.getElementById("prayerTimes");
+  box.innerHTML = "<p class='muted'>Vakitler yükleniyor...</p>";
   try {
     const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=Turkey&method=13`;
     const res = await fetch(url);
+    if (!res.ok) throw new Error("api");
     const json = await res.json();
-    timesData = json.data.timings;
+    const t = json && json.data && json.data.timings;
+    if (!t || !SHOW_KEYS.every(k => typeof t[k] === "string")) throw new Error("format");
+
+    timesData = t;
+    SHOW_KEYS.forEach(k => { t[k] = t[k].slice(0, 5); });
     renderPrayerTimes();
     document.getElementById("dateInfo").textContent =
       json.data.date.readable + " • " + json.data.date.hijri.date + " " + json.data.date.hijri.month.en;
   } catch (e) {
-    document.getElementById("prayerTimes").innerHTML = "<p class='muted'>Vakitler yüklenemedi.</p>";
+    timesData = null;
+    box.innerHTML = "<p class='muted'>Vakitler yüklenemedi. Şehir adını veya internet bağlantını kontrol et.</p>";
   }
 }
 
 function renderPrayerTimes() {
   const box = document.getElementById("prayerTimes");
+  if (!timesData) return;
   box.innerHTML = "";
   SHOW_KEYS.forEach(k => {
     const d = document.createElement("div");
     d.className = "prayer-item";
-    d.innerHTML = `<div class="name">${PRAYER_NAMES[k]}</div><div class="time">${timesData[k].slice(0, 5)}</div>`;
+    d.innerHTML = `<div class="name">${PRAYER_NAMES[k]}</div><div class="time">${timesData[k]}</div>`;
     box.appendChild(d);
   });
 }
 
 function toSeconds(hm) {
-  const [h, m] = hm.slice(0, 5).split(":").map(Number);
-  return (h * 60 + m) * 60;
+  const [h, m] = hm.split(":").map(Number);
+  return h * 3600 + m * 60;
 }
 
 function updateCountdown() {
@@ -570,53 +969,92 @@ function updateCountdown() {
     const sec = toSeconds(timesData[k]);
     if (sec > nowSec) { nextKey = k; nextSec = sec; break; }
   }
+
   let diff;
   if (nextKey) {
     diff = nextSec - nowSec;
     document.getElementById("nextLabel").textContent = `Sıradaki vakit: ${PRAYER_NAMES[nextKey]}`;
   } else {
-    const fajr = toSeconds(timesData.Fajr);
-    diff = (24 * 3600 - nowSec) + fajr;
+    diff = 24 * 3600 - nowSec + toSeconds(timesData.Fajr);
     document.getElementById("nextLabel").textContent = "Sıradaki vakit: İmsak (yarın)";
   }
+
   const h = Math.floor(diff / 3600);
   const m = Math.floor((diff % 3600) / 60);
   const s = diff % 60;
   document.getElementById("countdown").textContent =
     `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
+
 setInterval(updateCountdown, 1000);
 
-async function initApp() {
-  loadPrayerTimes("Istanbul");
+/* ---------------- gün değişimi (00:00) ---------------- */
 
-  let ayetIndex = dayIndex;
+let seenDayKey = todayKey();
+let rolloverRunning = false;
+
+async function refreshDailyContent() {
+  await loadSettings();
+  computeDailyState();
+  renderVerseCard();
+}
+
+async function handleNewDay() {
+  if (rolloverRunning) return;
+  rolloverRunning = true;
   try {
-    const res = await fetch(`${SCRIPT_URL}?action=getSettings`);
-    const data = await res.json();
-    if (data && data.aktif_soru !== undefined && data.aktif_soru !== "") {
-      const sIdx = parseInt(data.aktif_soru);
-      if (!isNaN(sIdx) && sIdx >= 0 && sIdx < QUESTIONS.length) {
-        dayIndex = sIdx;
-      }
+    seenDayKey = todayKey();
+    const wasOnQuestion = activeViewId() === "view-question";
+    await refreshDailyContent();
+    loadPrayerTimes(document.getElementById("cityInput").value.trim() || "Istanbul");
+
+    if (wasOnQuestion) {
+      renderQuestion();
+    } else if (!answeredToday()) {
+      renderQuestion();
+      showNotification("Yeni günün ayeti ve sorusu hazır! Menüden “Günün Sorusu”na dokunabilirsin.");
+    } else {
+      showNotification("Yeni günün ayeti ve hadisi güncellendi.");
     }
-    if (data && data.aktif_ayet !== undefined && data.aktif_ayet !== "") {
-      const aIdx = parseInt(data.aktif_ayet);
-      if (!isNaN(aIdx) && aIdx >= 0 && aIdx < HADITHS.length) {
-        ayetIndex = aIdx;
-      }
-    }
-  } catch (e) {}
+  } finally {
+    rolloverRunning = false;
+  }
+}
 
-  currentQ = QUESTIONS[dayIndex];
-  currentH = HADITHS[ayetIndex];
+function scheduleMidnightCheck() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+  setTimeout(() => {
+    if (todayKey() !== seenDayKey) handleNewDay();
+    scheduleMidnightCheck();
+  }, next - now);
+}
 
-  // SİTEDEKİ KARTA VE HADİS SAYFASINA SENKRONİZE BİÇİMDE YAZMA:
-  document.getElementById("verseText").textContent = `“${currentH.text}”`;
-  document.getElementById("verseSrc").textContent = currentH.source;
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && todayKey() !== seenDayKey) handleNewDay();
+});
 
+/* ---------------- başlangıç ---------------- */
+
+async function initApp() {
+  const storedCity = localStorage.getItem("prayer_city");
+  const cityInput = document.getElementById("cityInput");
+  if (storedCity) cityInput.value = storedCity;
+
+  loadPrayerTimes(cityInput.value.trim() || "Istanbul");
+  scheduleMidnightCheck();
+
+  await loadSettings();
+  computeDailyState();
+  renderVerseCard();
   renderQuestion();
-  show("view-question");
+
+  if (answeredToday()) {
+    goHomeView();
+    showNotification("Bugünün sorusunu zaten cevapladın. Yeni soru yarın 00:00'da geliyor.");
+  } else {
+    show("view-question");
+  }
 }
 
 initApp();
