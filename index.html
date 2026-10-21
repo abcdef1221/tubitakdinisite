@@ -623,7 +623,7 @@ async function sendVote(dayStr, qIdx, opt, reason) {
   try {
     return await callApi({ action: "vote", day: dayStr, soru: qIdx, opt: opt, reason: reason, client: clientId });
   } catch (e) {
-    return null;
+    return false;
   }
 }
 
@@ -750,6 +750,10 @@ document.getElementById("submitBtn").onclick = async () => {
 
 function renderResults(counts, q) {
   const box = document.getElementById("resultsBox");
+  if (counts === false) {
+    box.innerHTML = "<p class='muted'>Sunucuya ulaşılamadı; cevabın yalnızca bu cihazda saklandı. İnternet olduğu zaman tekrar cevaplayınca kaydın sunucuya da işlenir.</p>";
+    return;
+  }
   if (!counts || typeof counts !== "object") {
     box.innerHTML = "<p class='muted'>Sonuçlar şu an alınamadı; yanıtın yine de kaydedildi.</p>";
     return;
@@ -834,8 +838,8 @@ async function confirmEdit(qIdx) {
 
   saveAnswerToHistory(qIdx, optVal, reasonVal);
   renderHistory();
-  showNotification("Cevabınız başarıyla güncellendi.");
-  await sendVote(todayKey(), qIdx, optVal, reasonVal);
+  const sent = await sendVote(todayKey(), qIdx, optVal, reasonVal);
+  showNotification(sent === false ? "İnternet yok; değişiklik yalnızca bu cihazda kaydedildi." : "Cevabınız başarıyla güncellendi.");
 }
 
 async function renderPublicFeed() {
@@ -883,9 +887,7 @@ const SHOW_KEYS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 let timesData = null;
 
 document.getElementById("cityBtn").onclick = () => {
-  const city = document.getElementById("cityInput").value.trim() || "Istanbul";
-  localStorage.setItem("prayer_city", city);
-  loadPrayerTimes(city);
+  loadPrayerTimes(document.getElementById("cityInput").value.trim() || "Istanbul");
 };
 
 async function loadPrayerTimes(city) {
@@ -902,11 +904,18 @@ async function loadPrayerTimes(city) {
     timesData = t;
     SHOW_KEYS.forEach(k => { t[k] = t[k].slice(0, 5); });
     renderPrayerTimes();
+    localStorage.setItem("prayer_city", city);
     document.getElementById("dateInfo").textContent =
       json.data.date.readable + " • " + json.data.date.hijri.date + " " + json.data.date.hijri.month.en;
   } catch (e) {
     timesData = null;
-    box.innerHTML = "<p class='muted'>Vakitler yüklenemedi. Şehir adını veya internet bağlantını kontrol et.</p>";
+    const cityNotFound = e && (e.message === "format" || e.message === "api");
+    let lastGood = localStorage.getItem("prayer_city");
+    if (cityNotFound || lastGood === city) lastGood = "Istanbul";
+    if (!lastGood) lastGood = "Istanbul";
+    localStorage.setItem("prayer_city", lastGood);
+    document.getElementById("cityInput").value = lastGood;
+    box.innerHTML = `<p class='muted'>"${escapeHtml(city)}" için vakit yüklenemedi. ${cityNotFound ? "Şehir adını kontrol et," : "bağlantını kontrol et,"} ${escapeHtml(lastGood)} gösteriliyor.</p>`;
   }
 }
 
