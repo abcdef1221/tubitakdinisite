@@ -101,9 +101,19 @@
   .about-section p { margin: 0; line-height: 1.6; color: var(--muted); }
   .about-link { color: var(--accent); font-weight: 600; text-decoration: none; }
   .about-link:hover { text-decoration: underline; }
+
+  #bakim {
+    display: none; position: fixed; inset: 0; z-index: 5000;
+    background: var(--bg); color: var(--text);
+    align-items: center; justify-content: center; text-align: center; padding: 24px;
+  }
+  #bakim span { font-size: 1.35rem; font-weight: 700; line-height: 1.5; }
+  body.bakimda > :not(#bakim), body.hazirlaniyor > :not(#bakim) { display: none !important; }
 </style>
 </head>
-<body>
+<body class="hazirlaniyor">
+
+<div id="bakim"><span>Sitemiz Bakım Sebebiyle Bir Süre Kapalıdır</span></div>
 
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 <div class="sidebar" id="sidebar">
@@ -508,13 +518,21 @@ function readPinnedIndex(raw) {
 let settings = {};
 let daily = { questionIdx: 0, verseIdx: 0, hadithIdx: 0, pinned: { q: false, a: false, h: false } };
 
+function anchorDayCount() {
+  const b = String(settings.baslangic || "").trim();
+  if (!/^\d{8}$/.test(b)) return 0;
+  const d = dayKeyToDate(b);
+  return d ? localDayCount(d) : 0;
+}
+
 function rotationDayCount() {
   const s = String(settings.durum || "");
+  let referans = localDayCount();
   if (s.indexOf("kapali") === 0) {
     const frozen = dayKeyToDate(s.split("|")[1]);
-    if (frozen) return localDayCount(frozen);
+    if (frozen) referans = localDayCount(frozen);
   }
-  return localDayCount();
+  return referans - anchorDayCount();
 }
 
 function computeDailyState() {
@@ -526,7 +544,7 @@ function computeDailyState() {
   daily = {
     questionIdx: pq !== null && pq >= 0 && pq < QUESTIONS.length ? pq : mod(n, QUESTIONS.length),
     verseIdx: pa !== null && pa >= 0 && pa < VERSES.length ? pa : mod(n, VERSES.length),
-    hadithIdx: ph !== null && ph >= 0 && ph < HADITHS.length ? ph : mod(n + 7, HADITHS.length),
+    hadithIdx: ph !== null && ph >= 0 && ph < HADITHS.length ? ph : mod(n, HADITHS.length),
     pinned: { q: pq !== null, a: pa !== null, h: ph !== null }
   };
 }
@@ -608,8 +626,8 @@ themeBtn.onclick = () => {
 applyTheme(localStorage.getItem("theme") || "light");
 
 async function callApi(params) {
-  const query = new URLSearchParams(params).toString();
-  const res = await fetch(`${SCRIPT_URL}?${query}`);
+  const query = new URLSearchParams({ ...params, _t: Date.now() }).toString();
+  const res = await fetch(`${SCRIPT_URL}?${query}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Sunucu yanıtı: " + res.status);
   const text = await res.text();
   try {
@@ -714,6 +732,15 @@ function siteClosed() {
   return String((settings && settings.durum) || "").split("|")[0] === "kapali";
 }
 
+function siteInMaintenance() {
+  return String((settings && settings.durum) || "").split("|")[0] === "bakim";
+}
+
+function showBakim() {
+  document.body.classList.add("bakimda");
+  document.getElementById("bakim").style.display = "flex";
+}
+
 document.getElementById("submitBtn").onclick = async () => {
   if (selectedIndex === null || siteClosed()) return;
 
@@ -743,6 +770,11 @@ document.getElementById("submitBtn").onclick = async () => {
   show("view-hadith");
 
   const counts = await sendVote(todayKey(), daily.questionIdx, selectedIndex, reason);
+  if (counts && counts.error === "site bakimda") {
+    bakimAktif = true;
+    showBakim();
+    return;
+  }
   renderResults(counts, q);
 
   btn.textContent = wasAnswered ? "Cevabı Güncelle" : "Cevabı Gönder";
@@ -994,6 +1026,7 @@ async function handleNewDay() {
     seenDayKey = todayKey();
     const wasOnQuestion = activeViewId() === "view-question";
     await refreshDailyContent();
+    if (siteInMaintenance()) { showBakim(); return; }
     loadPrayerTimes(document.getElementById("cityInput").value.trim() || "Istanbul");
 
     if (wasOnQuestion || !answeredToday()) renderQuestion();
@@ -1018,15 +1051,38 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && todayKey() !== seenDayKey) handleNewDay();
 });
 
+let bakimAktif = false;
+
+function bakimNabiz() {
+  setInterval(async () => {
+    if (document.visibilityState !== "visible") return;
+    await loadSettings();
+    const bakimda = siteInMaintenance();
+    if (bakimda && !bakimAktif) { bakimAktif = true; showBakim(); }
+    else if (!bakimda && bakimAktif) { location.reload(); }
+  }, 60000);
+}
+
 async function initApp() {
+  setTimeout(() => { document.body.classList.remove("hazirlaniyor"); }, 5000);
+
   const storedCity = localStorage.getItem("prayer_city");
   const cityInput = document.getElementById("cityInput");
   if (storedCity) cityInput.value = storedCity;
 
+  await loadSettings();
+  document.body.classList.remove("hazirlaniyor");
+  bakimNabiz();
+
+  if (siteInMaintenance()) {
+    bakimAktif = true;
+    showBakim();
+    return;
+  }
+
   loadPrayerTimes(cityInput.value.trim() || "Istanbul");
   scheduleMidnightCheck();
 
-  await loadSettings();
   computeDailyState();
   renderVerseCard();
   renderQuestion();
